@@ -1,0 +1,54 @@
+{% extends 'layout/index.html' %}
+{% block title %} Account {% endblock%}
+
+{% block main %}
+<section class="account">
+    <div class="cover"></div>
+    <div class="d-flex flex-row align-items-center bg-white">
+        <div class="avatar">
+            <img 
+                src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                class="img-thumbnail">
+        </div>
+        
+        <div class="info">
+            <h3 class="main-color">User Fullname</h3>
+            <div class="contact">
+                <a href="#" class="main-color">
+                    <i class="fa fa-user-plus"></i>
+                </a>
+                <a href="#" class="main-color">
+                    <i class="fa fa-envelope"></i>
+                </a>
+            </div>
+            <div class="socials">
+                <a href="#"><i class="fa fa-facebook"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+                <a href="#"><i class="fa fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="bg-white mt-4 bio">
+    <h3 class="main-color">About</h3>
+    <p class="main-color text-style">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis dolores nobis id! Culpa incidunt autem ipsam dicta nostrum et! Excepturi, similique corrupti. Magni ipsam libero est, odit amet deserunt? Exercitationem totam quidem laboriosam facilis quam cumque labore natus laudantium ratione recusandae quaerat soluta, repellat repudiandae. Consequatur at dolorem labore culpa quasi dolor dolorum nihil libero harum repudiandae non, ex cupiditate magnam vero, atque quibusdam exercitationem blanditiis neque cumque repellendus quia deleniti voluptatibus inventore. Eos, soluta rerum! Quisquam sed sequi magnam.
+    </p>
+</section>
+<section class="mt-4 bg-white account-contacts">
+    <h3 class="main-color">Connection</h3>
+    <div class="row">
+        {% set list = ['ali', 'ahmed', 'khalid', 'malik', 'abdo', 'jamal', 'muhammad249', 'abbas'] %}
+        {% for username in list %}
+        <div class="connect col-md-3 mb-2">
+            <div class="contact-img">
+                <img 
+                    src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                    alt="" class="img-thumbnail img-fluid">
+            </div>
+            <a href="#" class="link-color">@{{ username }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
