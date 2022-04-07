@@ -5,6 +5,6 @@ Flask-Bcrypt
 Flask-Babel
 Flask-Login
 Flask-WTF
-Flask-Moment
+email_validator
 Flask-Socketio
 Flask-CORS

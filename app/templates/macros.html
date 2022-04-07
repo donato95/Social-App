@@ -1,0 +1,12 @@
+{% macro input_widget(field, id) %}
+    {% if field.errors %}
+    {% for error in field.errors %}
+        {{ field(class='form-control is-invalid', id=id) }}
+        <div class="invalid-feedback">
+            {{ error }}
+        </div>
+    {% endfor %}
+    {% else %}
+        {{ field(class='form-control', id=id) }}
+    {% endif %}
+{% endmacro %}

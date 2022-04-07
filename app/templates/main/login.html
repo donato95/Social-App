@@ -1,28 +1,36 @@
 {% extends 'layout/index.html' %}
+{% from 'macros.html' import input_widget %}
 {% block title %} Login {% endblock %}
 
 {% block main %}
 <div class="mt-4">
     <h2 class="h1 mb-3 text-center fw-normal"><i class="fa fa-sign-in"></i> Sign in</h2>
-    <form class="login-form">
+    <form method="post" class="login-form">
+        {{ form.hidden_tag() }}
         <div class="row g-3">
             <div class="col-sm-12">
-                <label for="password" class="form-label">Username</label>
-                <input type="password" class="form-control" id="password" placeholder="Username" value="" required>
-                <div class="invalid-feedback">
-                    Valid first name is required.
-                </div>
+                {{ form.username.label(class='form-label', for='username')}}
+                {{ input_widget(form.username, 'username') }}
             </div>
     
             <div class="col-sm-12">
-                <label for="confirm" class="form-label">Password</label>
-                <input type="password" class="form-control" id="confirm" placeholder="Password" value="" required>
-                <div class="invalid-feedback">
-                    Valid last name is required.
+                {{ form.password.label(class='form-label', for='password')}}
+                {{ input_widget(form.password, 'password') }}
+            </div>
+
+            <div class="col-sm-12">
+                <div class="form-check">
+                    {{ form.remember(id='remember', class='form-check-input') }}
+                    {{ form.remember.label(for='remember', class='form-check-label') }}
                 </div>
             </div>
+
             <div class="col-sm-12">
-                <input class="form-control btn-primary" type="submit" value="Sign in">
+                <a href="{{ url_for('main.login') }}">Forgot password?</a>
+            </div>
+
+            <div class="col-sm-12">
+                {{ form.submit(class='form-control btn-primary') }}
             </div>
         </div>
       </form>

@@ -77,9 +77,12 @@ ul {
 .unamed {
     margin-top: 10%;
 }
-.register-form,
+.register-form {
+    width: 60%;
+    margin: auto;
+}
 .login-form {
-    width: 80%;
+    width: 40%;
     margin: auto;
 }
 .account .avatar {
@@ -92,9 +95,9 @@ ul {
 .account .contact {
     margin: 10px 0;
 }
-.account .contact a{
+.account .contact a {
     border-radius: 5px;
-    font-size: 30px;
+    font-size: 19px;
 }
 .account .socials i {
     padding: 10px;
