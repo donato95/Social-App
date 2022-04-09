@@ -12,7 +12,8 @@ class Config:
     SSL_REDIRECT = False
     ADMIN_MAIL = 'donato9522@gmail.com'
     BABEL_DEFAULT_LOCALE = 'en'
-    LANGUAGES = ['en', 'ar']
+    LANGUAGES = ['en', 'ar', 'fr']
+    BABEL_TRANSLATION_DIRECTORIES = os.path.join(basedir + 'app/translations')
 
     @staticmethod
     def init_app(cls, app):

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{% set lang = 'en' %}
 <html lang="{{ lang }}" style="{% if lang == 'ar' %}direction:rtl;{% else %}direction:ltr;{% endif %}">
     <head>
         <meta charset="UTF-8">
@@ -35,8 +34,18 @@
                     </ul>
             
                     <div class="text-end">
-                        <a href="{{ url_for('main.login') }}" class="btn btn-outline-light me-2">Login</a>
-                        <a href="{{ url_for('main.register') }}" class="btn btn-warning">Sign-up</a>
+                        {% if current_user.is_authenticated %}
+                            <a 
+                                href="{{ url_for('main.logout') }}" 
+                                class="btn btn-outline-danger me-2">Logout</a>
+                        {% else %}
+                            <a 
+                                href="{{ url_for('main.login') }}" 
+                                class="btn btn-outline-light me-2">Login</a>
+                            <a 
+                                href="{{ url_for('main.register') }}" 
+                                class="btn btn-warning">Sign-up</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -48,7 +57,13 @@
         <footer class="text-center">
             {% block footer %}
             <p>
-                All &copy; reserved <a href="#/">Home</a>Template by <a href="https://twitter.com/">@donato</a>.
+                All &copy; reserved 
+                <a href="#/">Home</a>Template by 
+                <a href="https://twitter.com/">@donato</a>.
+            </p>
+            <p>
+                <a href="{{ url_for('main.lang', name='ar') }}">العربية</a> - 
+                <a href="{{ url_for('main.lang', name='en') }}">English</a>
             </p>
             <p>
               <a href="#">Back to top</a>

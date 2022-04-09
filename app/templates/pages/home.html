@@ -1,5 +1,5 @@
 {% extends 'layout/index.html' %}
-{% block title %} Home {% endblock %}
+{% block title %} {{ _('Home') }} {% endblock %}
 
 {% block main %}
     <div class="mt-4 d-flex flex-row align-items-center">
@@ -11,7 +11,7 @@
         <div class="wlc">
             <h1>Hello, Welcome to our site</h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem quaerat perspiciatis quasi, architecto similique et, repellendus assumenda esse itaque ipsa tempore sequi.</p>
-            <a href="{{ url_for('main.register') }}" class="btn btn-primary">Join Us</a>
+            <a href="{{ url_for('main.register') }}" class="btn btn-primary">{{ _('Join Us') }}</a>
         </div>
     </div>
 {% endblock %}

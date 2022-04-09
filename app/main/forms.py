@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import (StringField, FileField,
                             PasswordField, BooleanField, EmailField, SubmitField)
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
-from flask_babel import lazy_gettext as _l
+from flask_babelplus import lazy_gettext as _l
 from flask_bcrypt import check_password_hash
 
 from app.models import User

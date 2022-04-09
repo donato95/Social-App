@@ -101,6 +101,6 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
     def is_anonymous(self):
-        return super(AnonymousUser).is_anonymous
+        return True
 
 login_manager.anonymous_user = AnonymousUser
