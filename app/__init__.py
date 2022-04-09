@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, current_user
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
-from flask_babelplus import Babel
+from flask_babelplus import Babel, lazy_gettext as _l
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from config import config
@@ -17,6 +17,11 @@ babel = Babel()
 cors = CORS()
 socketio = SocketIO()
 db_session = db.session
+
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'main.login'
+login_manager.login_message = _l('You\'r successfully logged in')
+login_manager.login_message_category = 'success'
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -41,8 +46,10 @@ def create_app(config_name):
 @babel.localeselector
 def get_locale():
     if current_user.is_authenticated:
-        return current_user.local_lang
-    elif current_user.is_anonymous:
-        session['lang'] = current_app.config['BABEL_DEFAULT_LOCALE']
+        session['lang'] = current_user.local_lang
         return session['lang']
-    return request.accept_languages.best_match(current_app.config['LANGUAGES'])
+    if 'lang' in session.keys():
+        return session['lang']
+    if not 'lang' in session.keys():
+        session['lang'] = request.accept_languages.best_match(current_app.config['LANGUAGES'])
+        return session['lang']

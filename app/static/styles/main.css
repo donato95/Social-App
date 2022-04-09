@@ -121,4 +121,84 @@ ul {
 }
 
 
+/* ============= */
+.user-aside {
 
+}
+.user-aside header span {
+    font-size: 18px;
+}
+.user-aside header div {
+    width: 50%;
+    margin: auto;
+    padding: 20px 0;
+}
+.user-aside header div img {
+    border-radius: 50%;
+}
+.user-aside nav, .logout-link {
+    padding: 20px;
+}
+.user-aside nav a,
+.user-aside .logout-link a {
+    font-size: 18px;
+    font-size: 18px;
+    padding: 10px 0;
+}
+.user-aside nav a i {
+    
+}
+.my-contacts {
+
+}
+.my-contacts header {
+
+}
+.my-contacts header h3 {
+
+}
+.my-contacts .order {
+
+}
+.my-contacts .order a {
+    font-size: 17px;
+}
+.my-contacts .order i {
+    font-size: 10px;
+}
+.my-contacts .order a:last-child {
+
+}
+.my-contacts .search-form {
+
+}
+.my-contacts .search-form input {
+
+}
+.my-contacts .search-form button {
+
+}
+.my-contacts .message div.d-flex {
+    padding: 10px;
+    align-items: center;
+}
+.my-contacts .message .header {
+
+}
+.my-contacts .message .header div,
+.my-contacts .message .timestamp {
+    width: 50%;
+}
+.my-contacts .message .header div img {
+    width: 40%;
+    border-radius: 50%;
+}
+.my-contacts .message .header a {
+
+}
+.my-contacts .message .timestamp {
+
+}
+.my-contacts .message .content {
+    padding: 0 10px;
+}
