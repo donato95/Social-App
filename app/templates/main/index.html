@@ -28,12 +28,12 @@
                     {{ _('Notifications') }}
                 </a>
                 <a 
-                    href="#" 
+                    href="{{ url_for('main.inbox') }}" 
                     class="d-block link-color">
                     <i class="fa fa-inbox"></i>
                     {{ _('Chat') }}
                 </a>
-                <a href="#" class="d-block link-color">
+                <a href="{{ url_for('main.contacts') }}" class="d-block link-color">
                     <i class="fa fa-user"></i>
                     {{ _('Contacts') }}
                 </a>
@@ -52,59 +52,9 @@
             </div>
         </div>
     </aside>
-    <section class="my-contacts col-md-4">
-        {% block conacts%}
-            <div class="">
-                <header class="d-flex flex-row justify-content-between align-items-center">
-                    <h3 class="main-color">Chat</h3>
-                    <div class="order">
-                        <a href="#" class="link-color">Newer</a>
-                        <i class="fa fa-minus"></i> 
-                        <a href="#" class="link-color">Older</a>
-                    </div>
-                </header>
-                <div class="search-form bg-white">
-                    <form action="" method="post">
-                        <div class="input-group mb-3">
-                            <button class="btn btn-outline-secondary" type="submit">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            <input 
-                                type="search" 
-                                class="form-control" 
-                                id="inputGroupSelect03" 
-                            />
-                          </div>
-                    </form>
-                </div>
-                <div class="message bg-white">
-                    <div class="d-flex flex-row justify-space-between">
-                        <div class="header">
-                            <div>
-                                <img 
-                                    src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                                    alt="" 
-                                    class="img-thumbnail">
-                                <a class="link-color">@username</a>
-                            </div>
-                            
-                        </div>
-                        <span class="timestamp text-muted">1 min ago</span>
-                    </div>
-                    <div class="content">
-                        <p class="text-style main-color">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iusto hic quae voluptatibus enim expedita recusandae, commodi minima illo sapiente quasi ex nam veniam, sunt, impedit eos sed sint deleniti ea.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        {% endblock %}
-    </section>
-    <section class="chat col">
-        {% block chat %}
-            <div class="bg-white">Current chat</div>
-        {% endblock %}
-    </section>
+    {% block content %}
+    
+    {% endblock %}
 </div>
 
 {% endblock %}

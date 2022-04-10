@@ -14,30 +14,42 @@
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body class="font-muthanna">
-        
-        <header class="p-3 bg-dark text-white">
-            {% if not current_user.is_authenticated %}
-                <div class="container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
-                        </a>
+        {% if not current_user.is_authenticated %}
+        <header class="p-3 text-white">
+            <div class="container-fluid">
+                <nav class="navbar navbar-dark bg-dark" aria-label="First navbar example">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="{{ url_for('pages.home') }}">MSM</a>
+                        <button 
+                        class="navbar-toggler collapsed" 
+                        type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#siteNavbar" 
+                        aria-controls="siteNavbar" 
+                        aria-expanded="false" 
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                        </button>
                 
-                        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                            <li>
-                                <a href="{{ url_for('pages.home') }}" class="nav-link px-2 text-white">Home</a>
+                        <div class="navbar-collapse collapse" id="siteNavbar">
+                        <ul class="navbar-nav mb-2 text-center">
+                            <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('pages.home') }}">{{ _('Home') }}</a>
                             </li>
-                            <li>
-                                <a href="{{ url_for('pages.about') }}" class="nav-link px-2 text-white">About</a>
+                            <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.login') }}">{{ _('Login') }}</a>
                             </li>
-                            <li>
-                                <a href="{{ url_for('pages.contact') }}" class="nav-link px-2 text-white">Contact Us</a>
+                            <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('pages.about') }}">{{ _('About') }}</a>
                             </li>
-                        </ul>
+                            <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('pages.contact') }}">{{ _('Contact Us') }}</a>
+                            </li>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
+                    </nav>
+            </div>
         </header>
+        {% endif %}
         
         <main class="container">
             {% block main %}{% endblock %}

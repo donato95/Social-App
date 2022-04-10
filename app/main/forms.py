@@ -4,6 +4,7 @@ from wtforms.fields import (StringField, FileField,
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from flask_babelplus import lazy_gettext as _l
 from flask_bcrypt import check_password_hash
+from flask_login import current_user
 
 from app.models import User
 
@@ -124,3 +125,49 @@ class SettingsForm(FlaskForm):
             raise ValidationError(_l('Sorry characters must be 4 at leats'))
         if field.data and len(field.data) > 25:
             raise ValidationError(_l('Sorry characters must not be more than 25'))
+
+
+class EmailResetForm(FlaskForm):
+    old_email = EmailField(_l('Old email'), validators=[DataRequired(), Email()])
+    new_email = EmailField(_l('New email'), validators=[DataRequired(), Email()])
+    password = PasswordField(_l('Passowrd'), validators=[DataRequired()])
+    submit = SubmitField(_l('Changes'))
+
+    def validate_old_email(self, field):
+        user = User.query.filter_by(email=field.data).first()
+        if not field.data:
+            raise ValidationError(_l('Fill the email field first please'))
+        if not user:
+            raise ValidationError(_l('Email doesn\'t match'))
+    
+    def validate_new_email(self, field):
+        user = User.query.filter_by(email=field.data).first()
+        if not field.data:
+            raise ValidationError(_l('Fill the email field first please'))
+        if user:
+            raise ValidationError(_l('Email already extists. Try again with another username'))
+    
+    def validate_password(self, field):
+        user = User.query.filter_by(username=self.username.data).first()
+        if not field.data:
+            raise ValidationError(_l('Password field can\'t be empty'))
+        if user and not check_password_hash(user.hashed_password, field.data):
+            raise ValidationError(_l('Wrong password'))
+
+
+class PasswordResetForm(FlaskForm):
+    old_password = PasswordField(_l('Old passowrd'), validators=[DataRequired()])
+    new_password = PasswordField(_l('New passowrd'), validators=[DataRequired()])
+    confirm = PasswordField(_l('Confirm password'), validators=[DataRequired(), EqualTo('old_password', message=_l('Passwords arn\'t matched'))])
+    submit = SubmitField(_l('Changes'))
+    
+    def validate_old_password(self, field):
+        user = User.query.filter_by(username=current_user.username).first()
+        if not field.data:
+            raise ValidationError(_l('Password field can\'t be empty'))
+        if user and not check_password_hash(user.hashed_password, field.data):
+            raise ValidationError(_l('Wrong password'))
+    
+    def validate_confirm(self, field):
+        if not field.data:
+            raise ValidationError(_l('Fill the confirmation field first please'))

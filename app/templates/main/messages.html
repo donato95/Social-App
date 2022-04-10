@@ -1,2 +1,95 @@
 {% extends 'main/index.html' %}
 {% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+<section class="my-contacts col-md-4">
+    <div class="">
+        <header class="d-flex flex-row justify-content-between align-items-center">
+            <h3 class="main-color">Chat</h3>
+            <div class="order">
+                <a href="#" class="link-color">Newer</a>
+                <i class="fa fa-minus"></i> 
+                <a href="#" class="link-color">Older</a>
+            </div>
+        </header>
+        <div class="search-form bg-white">
+            <form action="" method="post">
+                <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <input 
+                        type="search" 
+                        class="form-control" 
+                        id="inputGroupSelect03" 
+                    />
+                    </div>
+            </form>
+        </div>
+        <div class="message bg-white border-bottom">
+            <div class="d-flex flex-row justify-space-between">
+                <div class="header">
+                    <div>
+                        <img 
+                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                            alt="" 
+                            class="img-thumbnail">
+                        <a class="link-color">@username</a>
+                    </div>
+                </div>
+                <span class="timestamp text-muted">1 min ago</span>
+            </div>
+        </div>
+        <ul class="pagination mt-4">
+            <li class="page-item">
+                <a class="page-link btn-main" href="#" aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link btn-main" href="#" aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</section>
+<section class="chat col">
+    <div class="bg-white">
+        <div class="d-flex flex-row justify-space-between border-bottom">
+            <div class="header">
+                <div>
+                    <img 
+                        src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                        alt="" 
+                        class="img-thumbnail">
+                    <a class="link-color">@username</a>
+                </div>
+                
+            </div>
+            <span class="timestamp text-muted">offline</span>
+        </div>
+        <div class="content">
+            <div class="recipient mb-2 d-flex flex-row align-items-start">
+                <div>
+                    <img 
+                        src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                        alt=""
+                        class="img-thumbnail"
+                    />
+                </div>
+                <p class="recipient-msg text-style main-bg-color">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum officia cupiditate repudiandae quisquam provident, possimus reprehenderit earum eos libero, doloremque laudantium maiores obcaecati optio! Modi minus officia quaerat provident accusantium, culpa nemo commodi aliquam sed!
+                </p>
+            </div>
+            <div class="sender mb-2">
+                <p class="sender-msg text-style main-color">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum officia cupiditate repudiandae quisquam provident, possimus reprehenderit earum eos libero, doloremque laudantium maiores obcaecati optio! Modi minus officia quaerat provident accusantium, culpa nemo commodi aliquam sed!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import db_session
 from app.models import User
-from app.main.forms import LoginForm, RegisterForm, SettingsForm
+from app.main.forms import LoginForm, RegisterForm, SettingsForm, EmailResetForm, PasswordResetForm
 
 main = Blueprint('main', __name__)
 
@@ -72,12 +72,22 @@ def register():
     return render_template('main/register.html', form=form, lang=session['lang'], title=title)
 
 
+@main.route('/contacts', methods=['GET', 'POST'])
+@login_required
+def contacts():
+    lang = session['lang']
+    title = _l('Contacts')
+    user = current_user._get_current_object()
+    return render_template('main/contacts.html', user=user, lang=lang, title=title)
+
+
 @main.route('/account/<int:id>', methods=['GET', 'POST'])
 @login_required
 def account(id):
-    lang = session['lang']
-    title = _l('Profile')
     user = User.query.get_or_404(id)
+    title = _l('Profile')
+    lang = session['lang']
+
     return render_template('main/account.html', user=user, lang=lang, title=title)
 
 
@@ -86,10 +96,19 @@ def account(id):
 def setting(id):
     user = User.query.get_or_404(id)
     form = SettingsForm()
+    email_form = EmailResetForm()
+    password_form = PasswordResetForm()
     title = _l('Settings')
     if request.method == 'POST' and form.validate_on_submit():
         pass
-    return render_template('main/settings.html', user=user, form=form, lang=session['lang'], title=title)
+    if request.method == 'POST' and email_form.validate_on_submit():
+        pass
+    if request.method == 'POST' and password_form.validate_on_submit():
+        pass
+    return render_template('main/settings.html', 
+                            user=user, form=form, lang=session['lang'], 
+                            title=title, email_form=email_form, 
+                            password_form=password_form)
 
 
 @main.route('/account/<int:id>/delete', methods=['GET', 'POST'])

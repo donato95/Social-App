@@ -1,44 +1,95 @@
-{% extends 'layout/index.html' %}
+{% extends 'main/index.html' %}
 {% from 'macros.html' import input_widget %}
 {% block title %} {{ title }} {% endblock %}
 
-{% block main %}
-<div class="settings mt-4">
-    <h2 class="h1 main-color text-center"><i class="fa fa-gears"></i> Setting Page</h2>
-    <form class="register-form" novalidate>
-        <div class="row g-3">
-            <div class="col-sm-6">
-                {{ form.firstname.label(class='form-label', for='firstname')}}
-                {{ input_widget(form.firstname, 'firstname') }}
-            </div>
-
-            <div class="col-sm-6">
-                {{ form.lastname.label(class='form-label', for='lastname')}}
-                {{ input_widget(form.lastname, 'lastname') }}
-            </div>
-
-            <div class="col-12">
-                {{ form.username.label(class='form-label', for='username')}}
-                <div class="input-group">
-                    <span class="input-group-text">@</span>
-                    {{ input_widget(form.username, 'username') }}
+{% block content %}
+<div class="settings col">
+    <div class="personal">
+        <h2 class="h3 main-color"><i class="fa fa-cog"></i> Personal Info</h2>
+        <form class="setting-form">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    {{ form.firstname.label(class='form-label', for='firstname')}}
+                    {{ input_widget(form.firstname, 'firstname') }}
+                </div>
+    
+                <div class="col-sm-6">
+                    {{ form.lastname.label(class='form-label', for='lastname')}}
+                    {{ input_widget(form.lastname, 'lastname') }}
+                </div>
+    
+                <div class="col-12">
+                    {{ form.username.label(class='form-label', for='username')}}
+                    <div class="input-group">
+                        <span class="input-group-text">@</span>
+                        {{ input_widget(form.username, 'username') }}
+                    </div>
+                </div>
+    
+                <div class="col-sm-12">
+                    {{ form.email.label(class='form-label', for='email')}}
+                    {{ input_widget(form.email, 'email') }}
+                </div>
+    
+                <div class="col-12">
+                    {{ form.upload.label(for='upload') }}
+                    {{ input_widget(form.upload, 'upload') }}
+                </div>
+    
+                <div class="col-sm-12">
+                    {{ form.submit(class='form-control btn-primary', id='register') }}
                 </div>
             </div>
-
-            <div class="col-sm-12">
-                {{ form.email.label(class='form-label', for='email')}}
-                {{ input_widget(form.email, 'email') }}
+        </form>
+    </div>
+    <div class="email mt-4">
+        <h2 class="h3 main-color"><i class="fa fa-cog"></i> Change Email</h2>
+        <form class="setting-form">
+            <div class="row g-3">
+                <div class="col-sm-12">
+                    {{ email_form.old_email.label(class='form-label', for='old_email')}}
+                    {{ input_widget(email_form.old_email, 'old_email') }}
+                </div>
+                
+                <div class="col-sm-12">
+                    {{ email_form.new_email.label(class='form-label', for='new_email')}}
+                    {{ input_widget(email_form.new_email, 'email') }}
+                </div>
+    
+                <div class="col-sm-12">
+                    {{ email_form.password.label(class='form-label', for='password')}}
+                    {{ input_widget(email_form.password, 'password') }}
+                </div>
+                <div class="col-sm-12">
+                    {{ email_form.submit(class='form-control btn-primary', id='register') }}
+                </div>
             </div>
+        </form>
+    </div>
+    <div class="password mt-4">
+        <h2 class="h3 main-color"><i class="fa fa-cog"></i> Change Password</h2>
+        <form class="setting-form">
+            <div class="row g-3">
+                <div class="col-sm-12">
+                    {{ password_form.old_password.label(class='form-label', for='old_password')}}
+                    {{ input_widget(password_form.old_password, 'old_password') }}
+                </div>
+                
+                <div class="col-sm-12">
+                    {{ password_form.new_password.label(class='form-label', for='new_password')}}
+                    {{ input_widget(password_form.new_password, 'new_password') }}
+                </div>
+    
+                <div class="col-sm-12">
+                    {{ password_form.confirm.label(class='form-label', for='confirm')}}
+                    {{ input_widget(password_form.confirm, 'confirm') }}
+                </div>
 
-            <div class="col-12">
-                {{ form.upload.label(for='upload') }}
-                {{ input_widget(form.upload, 'upload') }}
+                <div class="col-sm-12">
+                    {{ password_form.submit(class='form-control btn-primary', id='register') }}
+                </div>
             </div>
-
-            <div class="col-sm-12">
-                {{ form.submit(class='form-control btn-primary', id='register') }}
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 {% endblock %}

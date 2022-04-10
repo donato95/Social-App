@@ -1,0 +1,35 @@
+{% extends 'main/index.html' %}
+{% block title %} {{ title }} {% endblock%}
+
+{% block content %}
+<section class="contacts col">
+    <div class="row">
+        {% set list = ['ali', 'ahmed', 'khalid', 'malik', 'abdo', 'jamal', 'muhammad249', 'abbas'] %}
+        {% for username in list %}
+        <div class="connect col-md-3 mb-2">
+            <div class="card">
+                <div class="contact-img mb-3">
+                    <img 
+                        src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                        alt="" class="img-thumbnail img-fluid">
+                </div>
+                <div class="links">
+                    <a 
+                        href="{{ url_for('main.account', id=1) }}" 
+                        class="link-color d-block mb-3">
+                        @{{ username }}
+                    </a>
+                    <a href="#" class="touch main-bg-color mb-3">
+                        <i class="fa fa-user"></i>
+                    </a>
+                    <a href="#" class="touch main-bg-color mb-3">
+                        <i class="fa fa-paper-plane"></i>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

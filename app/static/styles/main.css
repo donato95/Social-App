@@ -50,6 +50,22 @@ ul {
 .link-color:hover {
     color: #000;
 }
+.main-bg-color {
+    background-color: #1289A7;
+    color: #fff;
+}
+.pagination {
+    padding: 0;
+}
+.pagination .page-item {
+
+}
+.pagination .page-item a {
+    border-radius: unset !important;
+}
+.pagination .page-item a:hover {
+    background-color: #fff;
+}
 .navbar-brand {
     margin-right: 0;
 }
@@ -85,46 +101,54 @@ ul {
     width: 40%;
     margin: auto;
 }
-.account .avatar {
-    width: 25%;
-    padding: 10px;
-}
-.account .info {
-    padding: 10px;
-}
-.account .contact {
-    margin: 10px 0;
-}
-.account .contact a {
-    border-radius: 5px;
-    font-size: 19px;
-}
-.account .socials i {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-.bio {
-    padding: 10px;
-}
-.account-contacts {
-    padding: 10px;
-}
-.account-contacts .connect {
+.contacts .connect {
     text-align: center;
 }
-.account-contacts .connect .contact-img img {
-    width: 60%;
+.contacts .connect .card {
+    padding: 20px;
+    border: none;
+    transition: all .3s ease;
 }
-.account-contacts .connect a {
+.contacts .connect .card:hover {
+    background-color: #fff;
+    box-shadow: 0 5px 8px rgb(0 0 0 / 30%);
+}
+.contacts .connect .contact-img img {
+    width: 60%;
+    border-radius: 50%;
+}
+.contacts .connect a {
     font-size: 18px;
 }
-
+.contacts .connect .touch {
+    padding: 5px 10px;
+    margin: 5px;
+}
+.contacts .connect .touch:hover {
+    color: #545c66;
+}
+.account .cover div {
+    width: 22%;
+}
+.account .cover .info {
+    width: 100%;
+    padding: 10px;
+}
+.account .cover .info a {
+    width: 15%;
+    text-align: center;
+    padding: 8px 0;
+    margin-bottom: 3px;
+    cursor: pointer;
+}
+.account .cover .info a:hover {
+    color: #000;
+}
+.account .bio {
+    padding: 15px;
+}
 
 /* ============= */
-.user-aside {
-
-}
 .user-aside header span {
     font-size: 18px;
 }
@@ -191,6 +215,7 @@ ul {
 }
 .my-contacts .message .header div img {
     width: 40%;
+    padding: 2px;
     border-radius: 50%;
 }
 .my-contacts .message .header a {
@@ -201,4 +226,37 @@ ul {
 }
 .my-contacts .message .content {
     padding: 0 10px;
+}
+.chat div.d-flex {
+    padding: 10px;
+    align-items: center;
+}
+.chat .header div {
+    width: 50%;
+}
+.chat .header div img {
+    width: 30%;
+    padding: 2px;
+    border-radius: 50%;
+}
+.chat .content {
+    padding: 10px;
+}
+.recipient {}
+.recipient div {
+    width: 100%;
+}
+.recipient div img {
+    width: 60%;
+    padding: 2px;
+    border-radius: 50%;
+}
+.recipient-msg,
+.sender-msg {
+    padding: 10px;
+    border-radius: 5px;
+}
+.sender {}
+.sender-msg {
+    background-color: #f5f5f5;
 }

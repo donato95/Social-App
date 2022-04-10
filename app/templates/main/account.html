@@ -1,60 +1,32 @@
-{% extends 'layout/index.html' %}
-{% block title %} {{ title }} {% endblock%}
+{% extends 'main/index.html' %}
+{% block title %} {{ title }} {% endblock %}
 
-{% block main %}
-<section class="account">
-    <div class="cover"></div>
-    <div class="d-flex flex-row align-items-center bg-white">
-        <div class="avatar">
-            <img 
-                src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                class="img-thumbnail">
-        </div>
-        
-        <div class="info">
-            <h3 class="main-color">User Fullname</h3>
-            <div class="contact">
-                <a href="#" class="main-color">
-                    <i class="fa fa-user-plus"></i>
-                    Folllow
-                </a>
-                <a href="#" class="main-color">
-                    <i class="fa fa-envelope"></i>
-                    Contact
-                </a>
-                <span class="d-block main-color">
-                    <i class="fa fa-calendar"></i>
-                        12 May 1990
-                </span>
-            </div>
-            <div class="socials">
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-                <a href="#"><i class="fa fa-instagram"></i></a>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="bg-white mt-4 bio">
-    <h3 class="main-color">About</h3>
-    <p class="main-color text-style">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis dolores nobis id! Culpa incidunt autem ipsam dicta nostrum et! Excepturi, similique corrupti. Magni ipsam libero est, odit amet deserunt? Exercitationem totam quidem laboriosam facilis quam cumque labore natus laudantium ratione recusandae quaerat soluta, repellat repudiandae. Consequatur at dolorem labore culpa quasi dolor dolorum nihil libero harum repudiandae non, ex cupiditate magnam vero, atque quibusdam exercitationem blanditiis neque cumque repellendus quia deleniti voluptatibus inventore. Eos, soluta rerum! Quisquam sed sequi magnam.
-    </p>
-</section>
-<section class="mt-4 bg-white account-contacts">
-    <h3 class="main-color">Connection</h3>
-    <div class="row">
-        {% set list = ['ali', 'ahmed', 'khalid', 'malik', 'abdo', 'jamal', 'muhammad249', 'abbas'] %}
-        {% for username in list %}
-        <div class="connect col-md-3 mb-2">
-            <div class="contact-img">
+{% block content %}
+    <section class="account col">
+        <div class="bg-white cover d-flex flex-row">
+            <div>
                 <img 
                     src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                    alt="" class="img-thumbnail img-fluid">
+                    class="w-100"
+                />
             </div>
-            <a href="#" class="link-color">@{{ username }}</a>
+            <div class="info">
+                <h3 class="main-color">Full Name Man</h3>
+                <a class="d-block btn-main">
+                    <i class="fa fa-user"></i>
+                    {{ _('Unfollow') }}
+                </a>
+                <a class="d-block btn-main">
+                    <i class="fa fa-paper-plane"></i>
+                    {{ _('Message') }}
+                </a>
+            </div>
         </div>
-        {% endfor %}
-    </div>
-</section>
+        <div class="bio bg-white mt-4">
+            <h4 class="main-color">About</h4>
+            <p class="main-color text-style">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit atque, amet blanditiis cumque veniam dolore repudiandae fugit totam natus et quisquam aut eum consequuntur illo labore dolor voluptate tempore, nesciunt laborum! Eos nihil ratione repellat? Sapiente, corrupti, quo fuga tempore earum doloremque laboriosam perspiciatis ipsa iusto, possimus alias? Voluptates iusto consequuntur quidem, eum, quasi minus, tempora itaque optio quam provident consectetur. Voluptatibus et ut error blanditiis fugiat est in, fuga adipisci, animi, veritatis dolores distinctio sint culpa accusamus praesentium accusantium?
+            </p>
+        </div>
+    </section>
 {% endblock %}
