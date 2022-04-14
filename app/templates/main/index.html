@@ -2,7 +2,7 @@
 
 {% block main %}
 
-<div class="row mt-4">
+<div class="row mt-2">
     <aside class="col-md-3 user-aside">
         <div class="bg-white">
             <header class="text-center">
@@ -12,11 +12,11 @@
                         alt="" 
                         class="w-100 img-thumbnail">
                 </div>
-                <span class="h4">User Fullname</span>
+                <span class="h4">{{ current_user.firstname + ' ' + current_user.lastname }}</span>
             </header>
             <nav class="mt-2">
                 <a 
-                    href="#" 
+                    href="{{ url_for('main.home') }}" 
                     class="d-block link-color">
                     <i class="fa fa-home"></i>
                     {{ _('Home') }}
@@ -28,24 +28,34 @@
                     {{ _('Notifications') }}
                 </a>
                 <a 
-                    href="{{ url_for('main.inbox') }}" 
+                    href="{{ url_for('user.inbox') }}" 
                     class="d-block link-color">
                     <i class="fa fa-inbox"></i>
-                    {{ _('Chat') }}
+                    {{ _('Inbox') }}
                 </a>
-                <a href="{{ url_for('main.contacts') }}" class="d-block link-color">
+                <a href="{{ url_for('user.contacts') }}" class="d-block link-color">
                     <i class="fa fa-user"></i>
                     {{ _('Contacts') }}
                 </a>
+                <a href="{{ url_for('user.bookmarks', id=current_user.id) }}" class="d-block link-color">
+                    <i class="fa fa-bookmark"></i> 
+                    {{ _('Bookmark') }}
+                </a>
                 <a 
-                    href="{{ url_for('main.setting', id=current_user.id) }}" 
+                    href="{{ url_for('user.account', id=current_user.id) }}" 
+                    class="d-block link-color">
+                    <i class="fa fa-user"></i>
+                    {{ _('Account') }}
+                </a>
+                <a 
+                    href="{{ url_for('auth.setting', id=current_user.id) }}" 
                     class="d-block link-color">
                     <i class="fa fa-cog"></i>
                     {{ _('Settings') }}
                 </a>
             </nav>
             <div class="mt-auto logout-link">
-                <a href="{{ url_for('main.logout') }}" class="link-color">
+                <a href="{{ url_for('auth.logout') }}" class="link-color">
                     <i class="fa fa-sign-out"></i>
                     Logout
                 </a>

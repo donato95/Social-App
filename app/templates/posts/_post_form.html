@@ -1,0 +1,15 @@
+<form action="" method="post" class="mb-4 post-form">
+    {{ post_form.hidden_tag() }}
+    {% if post_form.post.errors %}
+        {{ post_form.post(class='form-control is-invalid', placeholder='أكتب ملاحظة...') }}
+        {% for error in post_form.post.errors %}
+            <span class="invalid-feedback">{{ error }}</span>
+        {% endfor %}
+    {% else %}
+        {{ post_form.post(class='form-control', placeholder='أكتب ملاحظة...' )}}
+    {% endif %}
+    <button type="submit" value="نشر" class="btn btn-main mt-2">
+        <i class="fa fa-bullhorn"></i>
+        نشر
+    </button>
+</form>

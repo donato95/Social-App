@@ -1,0 +1,40 @@
+{% extends 'main/index.html' %}
+{% block title %} Single Chat Box {% endblock %}
+
+{% block content %}
+<secion class="chat col">
+    <div class="content mb-2 d-flex flex-row align-items-start">
+        <div class="chat-messages">
+            {% for message in msgs %}
+            <div class="msg mb-2">
+                <div 
+                    class="{% if current_user != message.recipient %}
+                                sender
+                            {% else %}
+                                recipient
+                            {% endif %}">
+                    <div class="img">
+                        <img 
+                            src="{{ url_for('static', filename='site-images/demo.jpg') }}" 
+                            class="circled-img" />
+                    </div>
+                    <div class="body">
+                        <p>{{ message.body }}</p>
+                        <span class="d-block text-muted">
+                            {{ moment(message.timestamp).format('LLL') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="chat-form">
+        <form method="get" id="chat-form">
+            {{ chat_form.hidden_tag() }}
+            {{ chat_form.text(class='form-control', id='message-input') }}
+            {{ chat_form.submit(class='btn btn-main', id='send-btn') }}
+        </form>
+    </div>
+</section>
+{% endblock %}

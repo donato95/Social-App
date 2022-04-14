@@ -1,0 +1,21 @@
+{% extends 'main/index.html' %}
+{% block title%} {{ title }} {% endblock%}
+
+
+{% block content %}
+<div class="post-page col">
+    <section class="post-details">
+        {% include 'posts/_post.html' %}
+        {% include 'posts/_comment_form.html' %}
+        <div class="comments">
+            <h5 class="main-color bg-white">
+                <i class="fa fa-comments"></i>
+                {{ _('Comments') }}
+            </h5>
+            {% for comment in comments %}
+                {% include 'posts/_comments.html' %}
+            {% endfor%}
+        </div>
+    </section>
+</div>
+{% endblock %}

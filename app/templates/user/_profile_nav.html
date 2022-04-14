@@ -1,0 +1,22 @@
+<div class="activities bg-white">
+    <a 
+        href="{{ url_for('user.posts', id=user.id) }}"
+        class="link-color">
+        {{ _('Posts') }}
+    </a>
+    <a 
+        href="{{ url_for('user.likes', id=user.id) }}"
+        class="link-color">
+        {{ _('Likes') }}
+    </a>
+    <a 
+        href="{{ url_for('user.reposts', id=user.id) }}"
+        class="link-color">
+        {{ _('Reposts') }}
+    </a>
+    <a 
+        href="{{ url_for('user.about', id=user.id) }}"
+        class="link-color">
+        {{ _('About') }}
+    </a>
+</div>

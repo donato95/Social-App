@@ -1,0 +1,12 @@
+<form action="" method="post" class="mb-4 mt-4 post-form">
+    {{ comment_form.hidden_tag() }}
+    {% if comment_form.content.errors %}
+        {{ comment_form.content(class='form-control is-invalid', placeholder='أكتب تعليق...') }}
+        {% for error in comment_form.content.errors %}
+            <span class="invalid-feedback">{{ error }}</span>
+        {% endfor %}
+    {% else %}
+        {{ comment_form.content(class='form-control')}}
+    {% endif %}
+    {{ comment_form.submit(class='btn btn-main mt-2') }}
+</form>

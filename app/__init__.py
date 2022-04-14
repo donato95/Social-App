@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_babelplus import Babel, lazy_gettext as _l
 from flask_cors import CORS
-from flask_socketio import SocketIO
+from flask_moment import Moment
 from config import config
 
 db = SQLAlchemy()
@@ -15,7 +15,7 @@ login_manager = LoginManager()
 bcrypt = Bcrypt()
 babel = Babel()
 cors = CORS()
-socketio = SocketIO()
+moment = Moment()
 db_session = db.session
 
 login_manager.session_protection = 'strong'
@@ -32,13 +32,38 @@ def create_app(config_name):
     login_manager.init_app(app)
     bcrypt.init_app(app)
     babel.init_app(app)
-    cors.init_app(app, resources={r"/chat/*": {"origins": "*"}})
-    socketio.init_app(app)
+    moment.init_app(app)
+    cors.init_app(app, resources={r"/*": {"origins": "*"}})
 
     from app.pages import pages
-    from app.main import main
     app.register_blueprint(pages)
+
+    from app.main import main
     app.register_blueprint(main)
+
+    from app.auth import auth
+    app.register_blueprint(auth, url_prefix='/auth')
+
+    from app.user import user
+    app.register_blueprint(user, url_prefix='/user')
+
+    from app.posts import posts
+    app.register_blueprint(posts, url_prefix='/posts')
+
+    from app.api import api
+    app.register_blueprint(api, url_prefix='/api/1')
+
+    from app.errors.handlers import (
+                                forbidden_access, not_found_error,
+                                unautherized_access, bad_request,
+                                internerl_error, method_not_allowed)
+
+    app.register_error_handler(400, bad_request)
+    app.register_error_handler(401, unautherized_access)
+    app.register_error_handler(403, forbidden_access)
+    app.register_error_handler(404, not_found_error)
+    app.register_error_handler(405, method_not_allowed)
+    app.register_error_handler(500, internerl_error)
 
     return app
 

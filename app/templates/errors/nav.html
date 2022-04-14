@@ -1,0 +1,9 @@
+<div class="error-links">
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.home') }}" class="link-color">{{ _('Home') }}</a>
+    {% else %}
+        <a href="{{ url_for('auth.login') }}" class="link-color">{{ _('Login') }}</a>
+        <a href="{{ url_for('auth.register') }}" class="link-color">{{ _('Register') }}</a>
+    {% endif %}
+    <a href="{{ url_for('pages.contact') }}" class="link-color">{{ _('Contact') }}</a>
+</div>

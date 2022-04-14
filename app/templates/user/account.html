@@ -1,0 +1,57 @@
+{% extends 'main/index.html' %}
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+    <section class="account col">
+        {% include 'user/_profile_nav.html' %}
+        <div class="main-user border-bottom bg-white d-flex flex-row">
+            <div>
+                <img 
+                    src="{{ url_for('static', filename='avatar/avatar.jpg') }}"
+                    class="img-thumbnail w-100"
+                />
+            </div>
+            <div>
+                <span class="h4 d-block main-color name">{{ user.firstname + ' ' + user.lastname }}</span>
+                <span class="d-block text-muted">
+                    @{{ user.username }}
+                </span>
+                {% if current_user != user %}
+                    {% if user.is_following(current_user) %}
+                        <span class="d-block text-muted">
+                            {{ _('Follows you') }}
+                        </span>
+                    {% endif %}
+                    {% if current_user.is_following(user) %}
+                        <a 
+                            class="d-block link-color"
+                            href="{{ url_for('user.action', id=user.id, action='unfollow') }}">
+                            <i class="fa fa-user"></i> {{ _('unfollow') }}
+                        </a>
+                    {% else %}
+                        <a 
+                            class="d-block link-color"
+                            href="{{ url_for('user.action', id=user.id, action='follow') }}">
+                            <i class="fa fa-user"></i> {{ _('follow') }}
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="mb-3 bg-white follows-followers">
+            <div class="row">
+                <a href="#" class="col-md-6 text-muted">{{ _('Follows') }} {{ user.followed.count() }}</a>
+                <a href="#" class="col-md-6 text-muted">{{ _('Followers') }} {{ user.followers.count() }}</a>
+            </div>
+        </div>
+        {% if posts %}
+            {% for post in posts %}
+                {% include 'posts/_post.html' %}
+            {% endfor %}
+        {% else %}
+            <div class="bg-white main-color text-center p-2">
+                <h4>{{  msg }}</h4>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

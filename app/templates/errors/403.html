@@ -1,0 +1,10 @@
+{% extends 'layout/index.html' %}
+{% block title%} Forbidden Access {% endblock%}
+
+{% block main %}
+<section class="error">
+    <h1>403</h1>
+    <p class="p error-message text-style text-color">{{ _('Access denied') }}</p>
+    {% include 'errors/nav.html' %}
+</section>
+{% endblock %}

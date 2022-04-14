@@ -1,0 +1,48 @@
+<div class="comment bg-white mb-2">
+    <div class="user d-flex align-items-center">
+        <div class="up-down-votes position-relative">
+            <a
+                href="#" 
+                class="
+                    {% if current_user.has_voted(comment) %}
+                        liked
+                    {% else %}
+                        link-color
+                    {% endif %}">
+                <i class="fa fa-chevron-up d-block"></i>
+            </a>
+            <span class="position-absolute main-color">
+                0
+            </span>
+            <a
+                href="#" 
+                class="
+                    {% if current_user.has_voted(comment) %}
+                        liked
+                    {% else %}
+                        link-color
+                    {% endif %}">
+                <i class="fa fa-chevron-down d-block"></i>
+            </a>
+        </div>
+        <div class="img">
+            <img 
+                src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                class="w-100 img-thumbnail circled"    
+            />
+        </div>
+        <div class="info">
+            <a
+                href="{{ url_for('user.account', id=comment.commenter.id) }}" 
+                class="link-color">
+                @{{ comment.commenter.username }}
+            </a>
+            <span class="d-block text-muted">{{ comment.published_date }}</span>
+        </div>
+    </div>
+    <div class="comment-content">
+        <p class="text-style main-color">
+            {{ comment.content }}
+        </p>
+    </div>
+</div>

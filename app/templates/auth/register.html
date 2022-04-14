@@ -4,8 +4,7 @@
 
 {% block main %}
     <div class="mt-4">
-        <h2 class="h1 text-center"><i class="fa fa-user-plus"></i> Register</h2>
-        <form class="register-form" method="post">
+        <form class="register-form bg-white" method="post">
             {{ form.hidden_tag() }}
             <div class="row g-3">
                 <div class="col-sm-6">
@@ -49,7 +48,7 @@
                 </div>
 
                 <div class="col-sm-12">
-                    <a href="{{ url_for('main.login') }}">Already have an account?</a>
+                    <a href="{{ url_for('auth.login') }}">Already have an account?</a>
                 </div>
 
                 <div class="col-sm-12">

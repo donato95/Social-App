@@ -1,0 +1,38 @@
+{% extends 'main/index.html' %}
+{% block title%} {{ title }} {% endblock%}
+
+{% block content %}
+
+<section class="about col">
+    {% if current_user.is_authenticated %}
+        {% include 'user/_profile_nav.html' %}
+    {% endif %}
+
+    <div class="bio bg-white mb-3 text-style main-color">
+        <h4>{{ _('About') }} {{user.firstname + ' ' + user.lastname }}</h4>
+        <p>{{ user.bio }}</p>
+    </div>
+    <div class="personal main-color bg-white">
+        <h4>{{ _('User Info') }}</h4>
+        <ul class="unstyled">
+            <li>
+                <i class="fa fa-home"></i>
+                <span>{{ user.city }}</span>
+            </li>
+            <li>
+                <i class="fa fa-suitcase "></i>
+                <span>{{ user.job }}</span>
+            </li>
+            <li>
+                <i class="fa fa-birthday-cake"></i>
+                <span>{{ moment(user.birth_date).format('LL') }}</span>
+            </li>
+            <li>
+                <i class="fa fa-calendar"></i>
+                <span>{{ moment(user.joined_date).format('LL') }}</span>
+            </li>
+        </ul>
+    </div>
+</section>
+
+{% endblock %}
