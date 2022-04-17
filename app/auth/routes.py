@@ -47,7 +47,7 @@ def register():
         except IntegrityError:
             db_session.rollback()
             flash(_l('Sorry we couldn\'t register you, please try again'))
-            return redirect(url_for(request.referrer))
+            return redirect(request.referrer)
     return render_template('auth/register.html', form=form, lang=session['lang'], title=title)
 
 @auth.route('/login', methods=['GET', 'POST'])
