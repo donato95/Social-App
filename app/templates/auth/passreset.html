@@ -4,28 +4,17 @@
 
 {% block main %}
 <div class="mt-4">
-    <form method="post" class="login-form bg-white">
+    <form method="post" class="reset-form bg-white">
         {{ form.hidden_tag() }}
         <div class="row g-3">
-            <div class="col-sm-12">
-                {{ form.username.label(class='form-label', for='username')}}
-                {{ input_widget(form.username, 'username') }}
-            </div>
-    
             <div class="col-sm-12">
                 {{ form.password.label(class='form-label', for='password')}}
                 {{ input_widget(form.password, 'password') }}
             </div>
-
+    
             <div class="col-sm-12">
-                <div class="form-check">
-                    {{ form.remember(id='remember', class='form-check-input') }}
-                    {{ form.remember.label(for='remember', class='form-check-label') }}
-                </div>
-            </div>
-
-            <div class="col-sm-12">
-                <a href="{{ url_for('auth.forgot_password') }}">{{ _('Forgot password?') }}</a>
+                {{ form.confirm.label(class='form-label', for='confirm')}}
+                {{ input_widget(form.confirm, 'password') }}
             </div>
 
             <div class="col-sm-12">

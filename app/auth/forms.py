@@ -10,7 +10,7 @@ from app.models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField(_l('Username'), validators=[DataRequired(), ])
+    username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Passowrd'), validators=[DataRequired(), ])
     remember = BooleanField(_l('Remember me'), )
     submit = SubmitField(_l('Login'))
@@ -155,7 +155,7 @@ class EmailResetForm(FlaskForm):
             raise ValidationError(_l('Wrong password'))
 
 
-class PasswordResetForm(FlaskForm):
+class PasswordUpdateForm(FlaskForm):
     old_password = PasswordField(_l('Old passowrd'), validators=[DataRequired()])
     new_password = PasswordField(_l('New passowrd'), validators=[DataRequired()])
     confirm = PasswordField(_l('Confirm password'), validators=[DataRequired(), EqualTo('old_password', message=_l('Passwords arn\'t matched'))])
@@ -176,3 +176,32 @@ class PasswordResetForm(FlaskForm):
 class ChatForm(FlaskForm):
     text = TextAreaField(validators=[DataRequired(_l('Can\'t send empty message'))])
     submit = SubmitField(_l('Send'))
+
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField(_l('New passowrd'), validators=[DataRequired()])
+    confirm = PasswordField(_l('Confirm password'), validators=[DataRequired(), EqualTo('password', message=_l('Passwords arn\'t matched'))])
+    submit = SubmitField(_l('Save'))
+    
+    def validate_old_password(self, field):
+        user = User.query.filter_by(username=current_user.username).first()
+        if not field.data:
+            raise ValidationError(_l('Password field can\'t be empty'))
+        if user and not check_password_hash(user.hashed_password, field.data):
+            raise ValidationError(_l('Wrong password'))
+    
+    def validate_confirm(self, field):
+        if not field.data:
+            raise ValidationError(_l('Fill the confirmation field first please'))
+
+
+class ForgotPassForm(FlaskForm):
+    email = EmailField(_l('Your email address'), validators=[DataRequired(), Email()])
+    submit = SubmitField(_l('Send'))
+
+    def validate_email(self, field):
+        user = User.query.filter_by(email=field.data).first()
+        if not field.data:
+            raise ValidationError(_l('Fill the email field first please'))
+        if not user:
+            raise ValidationError(_l('Email doesn\'t match'))

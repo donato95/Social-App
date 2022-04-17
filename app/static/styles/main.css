@@ -133,10 +133,15 @@ ul {
     padding: 15px;
     margin: 50px auto;
 }
-.login-form {
+.login-form, .reset-form, .forgot-form {
     width: 40%;
     padding: 15px;
     margin: 100px auto;
+}
+.unconfirmed {
+    height: 200px;
+    line-height: 5;
+    margin: 15% auto;
 }
 .home-page div:first-child {
     padding: 10px;

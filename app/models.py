@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import current_app, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from flask_bcrypt import generate_password_hash
-
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from app import db, login_manager, db_session
 
 
@@ -79,6 +79,7 @@ class User(db.Model, UserMixin):
     bio = db.Column(db.String(250))
     city = db.Column(db.String(25))
     birth_date = db.Column(db.Date, default=datetime.today)
+    confirmed = db.Column(db.Boolean, default=False)
     gender = db.Column(db.Boolean, default=None, nullable=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     posts = db.relationship('Posts', backref='author', lazy=True)

@@ -5,7 +5,7 @@ Flask-Bcrypt
 Flask-BabelPlus
 Flask-Login
 Flask-WTF
-Flask-Socketio
 Flask-CORS
 Pillow
-eventlet
+Flask-Mail
+pyjwt

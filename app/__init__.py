@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, current_app, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -6,6 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_babelplus import Babel, lazy_gettext as _l
 from flask_cors import CORS
+from flask_mail import Mail
 from flask_moment import Moment
 from config import config
 
@@ -16,10 +18,11 @@ bcrypt = Bcrypt()
 babel = Babel()
 cors = CORS()
 moment = Moment()
+mail = Mail()
 db_session = db.session
 
 login_manager.session_protection = 'strong'
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'auth.login'
 login_manager.login_message = _l('You\'r successfully logged in')
 login_manager.login_message_category = 'success'
 
@@ -27,19 +30,28 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
+    app.config.update(dict(
+        MAIL_SERVER = 'smtp.googlemail.com',
+        MAIL_PORT = 587,
+        MAIL_USE_TLS = True,
+        MAIL_USERNAME = os.environ.get('MAIL_USERNAME'),
+        MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    ))
+
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
     babel.init_app(app)
     moment.init_app(app)
+    mail.init_app(app)
     cors.init_app(app, resources={r"/*": {"origins": "*"}})
-
-    from app.pages import pages
-    app.register_blueprint(pages)
 
     from app.main import main
     app.register_blueprint(main)
+
+    from app.pages import pages
+    app.register_blueprint(pages, url_prefix='/pages')
 
     from app.auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
