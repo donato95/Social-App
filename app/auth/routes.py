@@ -122,7 +122,7 @@ def confirm(token):
         flash(_l('Confirmation link is invalid'))
     user = User.query.filter_by(email=email).first_or_404()
     if user.confirmed:
-        flash(_l('Account already been confirmed'))
+        return redirect(url_for('main.login'))
     else:
         user.confirmed = True
         db_session.commit()
