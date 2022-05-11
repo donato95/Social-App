@@ -1,0 +1,27 @@
+<div class="mt-2">
+    <h5 class="main-color bg-white might-follow-h">{{ _('Post Author') }}</h5>
+    <div class="bg-white to-follow border-bottom">
+        <div class="list">
+            <div class="user">
+                <div class="info d-flex align-items-center">
+                    <div class="img">
+                        <img 
+                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}"
+                            alt="Profile" class="w-100"
+                        />
+                    </div>
+                    <div class="name">
+                        <a
+                            href=""
+                            class="d-block link-color">
+                            {{ user.first_name + ' ' + user.last_name }}
+                        </a>
+                        <a href="{{ url_for('user.get', id=user.id) }}" class="text-muted">
+                            @{{ user.username}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -7,12 +7,16 @@
         <div class="bg-white">
             <header class="text-center">
                 <div>
-                    <img 
-                        src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                        alt="" 
-                        class="w-100 img-thumbnail">
+                    <a href="{{ url_for('user.account', id=current_user.id) }}">
+                        <img 
+                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                            alt="" 
+                            class="w-100 img-thumbnail">
+                    </a>
                 </div>
-                <span class="h4">{{ current_user.firstname + ' ' + current_user.lastname }}</span>
+                <a href="{{ url_for('user.account', id=current_user.id) }}" class="text-muted">
+                    <span class="h4">{{ current_user.firstname + ' ' + current_user.lastname }}</span>
+                </a>
             </header>
             <nav class="mt-2">
                 <a 
@@ -22,33 +26,49 @@
                     {{ _('Home') }}
                 </a>
                 <a 
-                    href="#" 
+                    href="{{ url_for('main.notifications', action='all') }}" 
                     class="d-block link-color">
                     <i class="fa fa-bell"></i>
                     {{ _('Notifications') }}
+                    {% set new_notifications = current_user.new_notifications() %}
+                    {% if new_notifications %}
+                        <span 
+                            class="badge link-color"
+                            id="notis_count"
+                            style="visibility:{% if new_notifications %} visible {% else %} hidden {% endif%};">
+                            {{ _(new_notifications) }}
+                        </span>
+                    {% endif %}
                 </a>
                 <a 
-                    href="{{ url_for('user.inbox') }}" 
+                    href="{{ url_for('user.messages') }}" 
                     class="d-block link-color">
-                    <i class="fa fa-inbox"></i>
-                    {{ _('Inbox') }}
+                    <i class="fa fa-envelope"></i>
+                    {{ _('Messages') }}
+                    {% set new_messages = current_user.new_messages() %}
+                    {% if new_messages %}
+                        <span 
+                            class="badge link-color"
+                            id="messages_count"
+                            style="visibility:{% if new_messages %} visible {% else %} hidden {% endif%};">
+                            {{ _(new_messages) }}
+                        </span>
+                    {% endif %}
                 </a>
-                <a href="{{ url_for('user.contacts') }}" class="d-block link-color">
-                    <i class="fa fa-user"></i>
-                    {{ _('Contacts') }}
-                </a>
-                <a href="{{ url_for('user.bookmarks', id=current_user.id) }}" class="d-block link-color">
-                    <i class="fa fa-bookmark"></i> 
-                    {{ _('Bookmark') }}
+                <a 
+                    href="{{ url_for('user.activities', id=current_user.id, action='bookmarks') }}" 
+                    class="d-block link-color">
+                    <i class="fa fa-bookmark"></i>
+                    {{ _('Bookmarks') }}
                 </a>
                 <a 
                     href="{{ url_for('user.account', id=current_user.id) }}" 
                     class="d-block link-color">
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-user-circle"></i>
                     {{ _('Account') }}
                 </a>
                 <a 
-                    href="{{ url_for('auth.setting', id=current_user.id) }}" 
+                    href="{{ url_for('auth.setting') }}" 
                     class="d-block link-color">
                     <i class="fa fa-cog"></i>
                     {{ _('Settings') }}
@@ -65,6 +85,7 @@
     {% block content %}
     
     {% endblock %}
+    
 </div>
 
 {% endblock %}

@@ -12,10 +12,44 @@
                 <i class="fa fa-comments"></i>
                 {{ _('Comments') }}
             </h5>
-            {% for comment in comments %}
-                {% include 'posts/_comments.html' %}
-            {% endfor%}
+            {% if comments %}
+                {% for comment in comments %}
+                    {% include 'posts/_comments.html' %}
+                {% endfor%}
+            {% else %}
+                <div class="bg-white text-center h4 p-4 main-color">{{ _('No comments yet') }}</div>
+            {% endif %}
         </div>
     </section>
 </div>
+
+<div class="col-md-3">
+    <h5 class="main-color bg-white might-follow-h border-bottom">{{ _('Post Author') }}</h5>
+    <div class="bg-white to-follow border-bottom">
+        <div class="list">
+            <div class="user">
+                <div class="info d-flex align-items-center">
+                    <div class="img">
+                        <img 
+                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}"
+                            alt="Profile" class="w-100"
+                        />
+                    </div>
+                    <div class="name">
+                        <a
+                            href="{{ url_for('user.account', id=post.author.id) }}"
+                            class="d-block link-color">
+                            {{ post.author.firstname + ' ' + post.author.lastname }}
+                        </a>
+                        <a href="{{ url_for('user.account', id=post.author.id) }}" class="text-muted">
+                            @{{ post.author.username}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
+

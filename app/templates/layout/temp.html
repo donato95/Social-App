@@ -1,0 +1,19 @@
+{% if current_user.is_authenticated %}
+    <script>
+        let get_notifications = function(url) {
+            setInterval(function() {
+                $.ajax(`${url}`).done(
+                    function(notifications) {
+                        for(let i = 0; i < notifications.length; i++) {
+                            set_new_count(notifications[i].data)
+                        }
+                    }
+                )
+            }, 10000)
+        }
+        $(function() {
+            get_notifications("{{ url_for('main.notifications', action='messages') }}")
+            get_notifications("{{ url_for('main.notifications', action='all') }}")
+        })
+    </script>
+{% endif %}

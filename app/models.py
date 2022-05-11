@@ -1,3 +1,5 @@
+from time import time
+import json
 from datetime import datetime
 from flask import current_app, url_for
 from flask_login import UserMixin, AnonymousUserMixin
@@ -5,10 +7,6 @@ from flask_bcrypt import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from app import db, login_manager, db_session
 
-
-@login_manager.user_loader
-def load_user(id):
-    return User.query.get(id)
 
 class Permessions:
     USER = 1
@@ -83,10 +81,17 @@ class User(db.Model, UserMixin):
     gender = db.Column(db.Boolean, default=None, nullable=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     posts = db.relationship('Posts', backref='author', lazy=True)
-    liked = db.relationship('PostLikes', backref='user', lazy=True, )
+    liked = db.relationship('PostLikes', backref='favorites', lazy=True, )
     booked = db.relationship('PostBookmark', backref='booker', lazy=True)
     reposted = db.relationship('PostRepost', backref='reposter', lazy=True)
     comments = db.relationship('Comments', backref='commenter', lazy=True)
+    replier = db.relationship('MessagesReplies', backref='replier', lazy=True)
+    setter = db.relationship('Notifications',
+                            foreign_keys='Notifications.setter_id',
+                            backref='creater', lazy='dynamic')
+    getter = db.relationship('Notifications',
+                            foreign_keys='Notifications.getter_id',
+                            backref='user', lazy='dynamic')
     followed = db.relationship('Follows',
                                 foreign_keys=[Follows.follower_id],
                                 backref=db.backref('follower', lazy='joined'),
@@ -123,28 +128,49 @@ class User(db.Model, UserMixin):
     def password(self, password):
         self.hashed_password = generate_password_hash(password)
     
+    @property
+    def followed_posts(self):
+        return Posts.query.join(Follows, Follows.followed_id == Posts.user_id)\
+            .filter(Follows.follower_id == self.id, Posts.is_public == True)
+    
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
+    
     def new_messages(self):
-        last_read_time = self.last_read_time or datetime(1900, 1, 1)
-        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
+        return Message.query.filter_by(recipient=self).filter(Message.seen == False).count()
+    
+    def new_notifications(self):
+        return Notifications.query.filter_by(user=self).filter(Notifications.seen == False).count()
+
+    def add_notifications(self, name, user, is_message=False, vote=None, post=None):
+        n = Notifications(
+            name=name, creater=user, user=self, is_message=is_message, 
+            post_id=post, vote_id=vote)
+        db_session.add(n)
 
     def is_following(self, user):
-        if user.id is None:
+        if user is None:
             return False
-        return self.followed.filter_by(followed_id=user.id).first() is not None
+        return self.followed.filter_by(followed=user).first() is not None
     
     def is_followed_by(self, user):
-        if user.id is None:
+        if user is None:
             return False
-        return self.followers.filter_by(follower_id=user.id).first() is not None
+        return self.followers.filter_by(follower=user).first() is not None
     
     def follow(self, user):
         if not self.is_following(user):
-            folllow = Follows(followed=user, follower=self)
-            db_session.add(folllow)
+            follow = Follows(followed_id=user.id, follower_id=self.id)
+            db_session.add(follow)
     
     def unfollow(self, user):
         if self.is_following(user):
-            unfollow = Follows.query.filter_by(followed_id=user.id).first()
+            unfollow = Follows.query.filter_by(followed_id=user.id, follower_id=self.id).first()
             db_session.delete(unfollow)
 
     def has_liked(self, post):
@@ -156,7 +182,7 @@ class User(db.Model, UserMixin):
             db_session.add(like)
     
     def unliked(self, post):
-        if self.has_booked(post):
+        if self.has_liked(post):
             unliked = PostLikes.query.filter_by(post_id=post.id, user_id=self.id).first()
             db_session.delete(unliked)
     
@@ -245,12 +271,23 @@ class Posts(db.Model):
     content = db.Column(db.Text, nullable=False)
     published_date = db.Column(db.DateTime, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
-    is_public = db.Column(db.Boolean, default=False)
+    is_public = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    likes = db.relationship('PostLikes', backref='post_likes', lazy=True)
-    reposts = db.relationship('PostRepost', backref='reposts', lazy=True)
-    comments = db.relationship('Comments', backref='comment', lazy=True)
-    bookmarked = db.relationship('PostBookmark', backref=db.backref('saved', lazy=True))
+    likes = db.relationship('PostLikes', 
+                                backref='post_likes', lazy=True,
+                                cascade='all, delete, delete-orphan')
+    reposts = db.relationship('PostRepost', 
+                                backref='reposts', lazy=True,
+                                cascade='all, delete, delete-orphan')
+    comments = db.relationship('Comments',
+                                backref='comment', lazy=True, 
+                                cascade='all, delete, delete-orphan')
+    bookmarked = db.relationship('PostBookmark', 
+                                backref=db.backref('saved', lazy=True),
+                                cascade='all, delete, delete-orphan')
+    notifications = db.relationship('Notifications', 
+                                backref=db.backref('p_notifications', lazy=True),
+                                cascade='all, delete, delete-orphan')
 
     def to_dict(self) -> dict:
         return {
@@ -340,6 +377,7 @@ class Upvotes(db.Model):
     comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     upvote = db.Column(db.Boolean, default=True)
+    notifications = db.relationship('Notifications', backref='v_notifications', lazy=True)
 
     def __init__(self, **kwargs) -> None:
         super(Upvotes, self).__init__(**kwargs)
@@ -349,16 +387,53 @@ class Upvotes(db.Model):
 
 
 class Message(db.Model):
-    __tablename_ = 'messages'
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body = db.Column(db.Text)
+    seen = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    replie = db.relationship('MessagesReplies', backref='message_replie', lazy=True)
 
     def __init__(self, **kwargs) -> None:
         super(Message, self).__init__(**kwargs)
 
     def __repr__(self) -> str:
         return f'<Message {self.id}>'
+
+
+class MessagesReplies(db.Model):
+    __tablename__ = 'messages_replies'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    seen = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __init__(self, **kwargs) -> None:
+        super(MessagesReplies, self).__init__(**kwargs)
+
+    def __repr__(self) -> str:
+        return f'<MessagesReplies {self.id}>'
+
+
+class Notifications(db.Model):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    seen = db.Column(db.Boolean, default=False)
+    is_message = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.Float, default=time, index=True)
+    action_date = db.Column(db.DateTime, default=datetime.utcnow)
+    setter_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    getter_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    vote_id = db.Column(db.Integer, db.ForeignKey('upvotes.id'))
+
+    def __init__(self, **kwargs) -> None:
+        super(Notifications, self).__init__(**kwargs)
+
+    def __repr__(self) -> str:
+        return f'<Notifications {self.id}>'
 

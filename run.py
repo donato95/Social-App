@@ -1,4 +1,3 @@
-from distutils.log import debug
 import os
 import click
 from app import create_app
@@ -34,7 +33,3 @@ def init(lang):
     if os.system('pybabel init -i messages.pot -d app/translations -l ' + lang):
         raise RuntimeError('init command failed')
     os.remove('messages.pot')
-
-
-if __name__ == '__main__':
-    socketio.run(app, debug=True)

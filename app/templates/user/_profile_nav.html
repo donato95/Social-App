@@ -1,16 +1,16 @@
 <div class="activities bg-white">
     <a 
-        href="{{ url_for('user.posts', id=user.id) }}"
+        href="{{ url_for('user.activities', id=user.id, action='posts') }}"
         class="link-color">
         {{ _('Posts') }}
     </a>
     <a 
-        href="{{ url_for('user.likes', id=user.id) }}"
+        href="{{ url_for('user.activities', id=user.id, action='likes') }}"
         class="link-color">
         {{ _('Likes') }}
     </a>
     <a 
-        href="{{ url_for('user.reposts', id=user.id) }}"
+        href="{{ url_for('user.activities', id=user.id, action='reposts') }}"
         class="link-color">
         {{ _('Reposts') }}
     </a>

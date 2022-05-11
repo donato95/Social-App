@@ -1,15 +1,18 @@
 <article class="bg-white border-bottom post main-color">
     <div class="post-header">
         <div class="author position-relative">
-            <a href="{{ url_for('user.account', id=post.author.id) }}" class="link-color">
+            <a 
+                href="{{ url_for('user.account', id=post.author.id) }}" 
+                class="d-block link-color">
                 {{ post.author.firstname + ' ' + post.author.lastname}}
             </a>
-            <span class="d-block muted">
-                {% if post.is_public %}
-                    <i class="fa fa-globe"></i> 
+            {% if post.is_public %}
+                    <i class="fa fa-globe unlocked"></i> 
                 {% else %}
-                    <i class="fa fa-lock"></i>
-                {% endif %}
+                    <i class="fa fa-lock locked"></i>
+            {% endif %}
+            <span class="d-inline-block muted">
+                
                 {{ moment(post.published_date).format('LLL') }}
             </span>
             <button
@@ -21,34 +24,37 @@
             <div class="dropdown-menu post-dropdown-menu" aria-labelledby="dropdownMenu">
                 {% if current_user.has_booked(post) %}
                     <a
-                        class="dropdown-item link-color"
+                        class="dropdown-item link-color unmarked"
                         href="{{ url_for('posts.action', id=post.id, action='unmark') }}">
                         <i class="fa fa-bookmark"></i>
-                        {{ _('Delete from bookmark') }}
+                        <span>{{ _('Delete from bookmark') }}</span>
                     </a>
                 {% else %}
                     <a
-                        class="dropdown-item link-color"
+                        class="dropdown-item link-color marked"
                         href="{{ url_for('posts.action', id=post.id, action='mark') }}">
                         <i class="fa fa-bookmark-o"></i>
-                        {{ _('Bookmark') }}
+                        <span>{{ _('Bookmark') }}</span>
                     </a>
                 {% endif %}
                 {% if current_user == post.author %}
+                    {% if post.is_public %}
+                        <a
+                            class="dropdown-item link-color private"
+                            href="{{ url_for('posts.action', id=post.id, action='private') }}">
+                            <i class="fa fa-lock"></i>
+                            <span>{{ _('Private') }}</span>
+                        </a>
+                    {% else %}
+                        <a
+                            class="dropdown-item link-color public"
+                            href="{{ url_for('posts.action', id=post.id, action='public') }}">
+                            <i class="fa fa-globe"></i>
+                            <span>{{ _('Public') }}</span>
+                        </a>
+                    {% endif %}
                     <a
-                        class="dropdown-item link-color"
-                        href="{{ url_for('posts.action', id=post.id, action='private') }}">
-                        <i class="fa fa-lock"></i>
-                        {{ _('Private') }}
-                    </a>
-                    <a
-                        class="dropdown-item link-color"
-                        href="{{ url_for('posts.action', id=post.id, action='public') }}">
-                        <i class="fa fa-globe"></i>
-                        {{ _('Public') }}
-                    </a>
-                    <a
-                        class="dropdown-item link-color"
+                        class="dropdown-item link-color delete"
                         href="{{ url_for('posts.action', id=post.id, action='delete') }}">
                         <i class="fa fa-trash"></i>
                         {{ _('Delete') }}
@@ -59,51 +65,51 @@
     </div>
 
     <div class="post-content">
-        <a href="{{ url_for('posts.get', id=post.id) }}" class="main-color post-link">
+        <a href="{{ url_for('posts.post', id=post.id) }}" class="main-color post-link">
             <p class="text-style">
                 {{ post.content }}
             </p>
         </a>
     </div>
     
-    <div class="post-related d-flex justify-content-center">
+    <div class="post-related d-flex justify-content-between">
         {% if current_user.has_liked(post) %}
         <a 
             href="{{ url_for('posts.action', id=post.id, action='unlike') }}"
             class="main-color liked">
-            <span class="">
+            <i class="fa fa-heart liked"></i>
+            <span class="count">
                 {{ post.likes | count }}
             </span>
-            <i class="fa fa-heart liked"></i>
         </a>
         {% else %}
             <a 
                 href="{{ url_for('posts.action', id=post.id, action='like') }}"
                 class="main-color unliked">
-                <span class="main-color">
-                    {{ post.likes | count }}
-                </span>
                 <i class="fa fa-heart-o unliked"></i>
+                <span class="count">
+                    {{ _(post.likes | count) }}
+                </span>
             </a>
         {% endif %}
         {% if current_user.has_repost(post) %}
             <a
                 href="{{ url_for('posts.action', id=post.id, action='unrepost') }}"
-                class="link-color">
-                {{ post.reposts | count }}
-                <i class="fa fa-retweet link-color"></i>
+                class="link-color reposted">
+                <i class="fa fa-retweet"></i>
+                <span class="count">{{ _(post.reposts | count) }}</span>
             </a>
         {% else %}
             <a
                 href="{{ url_for('posts.action', id=post.id, action='repost') }}"
-                class="main-color">
-                {{ post.reposts | count }}
+                class="main-color repost">
                 <i class="fa fa-retweet"></i>
+                <span class="count">{{ _(post.reposts | count) }}</span>
             </a>
         {% endif %}
         <a href="#" class="main-color">
-            8
             <i class="fa fa-comment-o"></i>
+            {{ _(post.comments | count) }}
         </a>
     </div>
 </article>

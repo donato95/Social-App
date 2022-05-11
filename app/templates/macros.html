@@ -1,12 +1,64 @@
-{% macro input_widget(field, id) %}
+{% macro input_widget(field, id, placeholder) %}
     {% if field.errors %}
     {% for error in field.errors %}
-        {{ field(class='form-control is-invalid', id=id) }}
+        {{ field(class='form-control is-invalid', id=id, placeholder=placeholder) }}
         <div class="invalid-feedback">
             {{ error }}
         </div>
     {% endfor %}
     {% else %}
-        {{ field(class='form-control', id=id) }}
+        {{ field(class='form-control', id=id, placeholder=placeholder) }}
     {% endif %}
+{% endmacro %}
+
+{% macro pagination_widget(pagination, endpoint, fragment='') %}
+    <ul class="pagination">
+        <li{% if not pagination.has_prev %} class="disabled"{% endif %}>
+            <a href="{% if pagination.has_prev %}{{ url_for(endpoint, page=pagination.prev_num, **kwargs) }}{{ fragment }}{% else %}#{% endif %}">
+                &laquo;
+            </a>
+        </li>
+        {% for p in pagination.iter_pages() %}
+            {% if p %}
+                {% if p == pagination.page %}
+                    <li class="active">
+                        <a href="{{ url_for(endpoint, page = p, **kwargs) }}{{ fragment }}">{{ p }}</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ url_for(endpoint, page = p, **kwargs) }}{{ fragment }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% else %}
+                <li class="disabled"><a href="#">&hellip;</a></li>
+            {% endif %}
+        {% endfor %}
+        <li {% if not pagination.has_next %} class="disabled"{% endif %}>
+            <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.next_num, **kwargs) }}{{ fragment }}{% else %}#{% endif %}">
+                &raquo;
+            </a>
+        </li>
+    </ul>
+{% endmacro %}
+
+
+{% macro notification_widget(noti, action, date) %}
+    <div class="bg-white main-color border-bottom p-2">
+        <a href="{{ url_for('user.account', id=noti.creater.id) }}" class="d-inline-block link-color">
+            {{ noti.creater.username }}
+        </a>
+        {% if action != 'follower' %}
+            <p class="d-inline-block mb-0">
+                {{ _('Has ' + action + ' your') }}
+                <a href="{{ url_for('posts.post', id=noti.post_id) }}" class="link-color">
+                    {{ _('post') }}
+                </a>
+            </p>
+        {% else %}
+            <p class="d-inline-block mb-0">
+                {{ _('Has followed you') }}
+            </p>
+        {% endif %}
+        <span>{{ date }}</span> 
+    </div>
 {% endmacro %}

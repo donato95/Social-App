@@ -54,6 +54,12 @@ ul {
 .circled {
     border-radius: 50%;
 }
+.rtl {
+    direction: rtl;
+}
+.ltr {
+    direction: ltr;
+}
 .main-bg-color {
     background-color: #1289A7;
     color: #fff;
@@ -150,6 +156,40 @@ ul {
     height: 100px;
     max-height: 100px;
 }
+.to-follow {
+    padding: 5px;
+}
+.to-follow .user {
+    padding: 5px 0;
+}
+.to-follow .info .img {
+    width: 25%;
+    display: inline-block;
+}
+.to-follow .info .img img {
+    border-radius: 50%;
+}
+.to-follow .info .name {
+    margin-right: 8px;
+    display: inline-block
+}
+.to-follow .info .name a {
+    font-size: 20px;
+}
+.to-follow .info .name a:last-child {
+    font-size: 15px;
+}
+.to-follow .hit-follow {
+    width: 100%;
+}
+.to-follow .hit-follow button {
+    font-size: 14px;
+    padding: 5px 7px;
+}
+.might-follow-h {
+    margin: 0;
+    padding: 10px;
+}
 .post {
     padding: 10px;
 }
@@ -179,7 +219,6 @@ ul {
     padding: 10px;
 }
 .post .post-related a {
-    width: 33.333%;
     text-align: center;
 }
 .comments h5 {
@@ -247,7 +286,7 @@ ul {
     border: none
 }
 .follows-followers {
-    padding: 15px 10px;
+    padding: 10px;
 }
 .follows-followers div a:hover {
     text-decoration: underline;
@@ -359,7 +398,7 @@ ul {
     width: 50%;
 }
 .my-contacts .message .header div img {
-    width: 40%;
+    width: 25%;
     padding: 2px;
     border-radius: 50%;
 }
@@ -370,7 +409,7 @@ ul {
 
 }
 .my-contacts .message .content {
-    padding: 0 10px;
+    padding: 0 15px;
 }
 .chat div.d-flex {
     padding: 10px;
@@ -431,6 +470,9 @@ ul {
 }
 .main-user div span {
     margin-bottom: 5px;
+}
+.main-user div span small {
+    font-size: 15px;
 }
 .main-user div span:last-child {
     margin-bottom: 0;

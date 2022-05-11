@@ -1,0 +1,21 @@
+{% extends 'main/index.html' %}
+{% from 'macros.html' import notification_widget %}
+{% block title%} {{ title }} {% endblock%}
+
+{% block content %}
+
+<section class="notifications col">
+    {% if notis %}
+        {% for noti in notis %}
+
+            {{ 
+                notification_widget(noti=noti, action=noti.name, date=moment(noti.action_date).fromNow())
+            }}
+            
+        {% endfor %}
+    {% endif %}
+</section>
+
+{% include 'main/_to_follow.html' %}
+
+{% endblock %}

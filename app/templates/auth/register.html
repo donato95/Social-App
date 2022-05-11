@@ -9,35 +9,35 @@
             <div class="row g-3">
                 <div class="col-sm-6">
                     {{ form.firstname.label(class='form-label', for='firstname')}}
-                    {{ input_widget(form.firstname, 'firstname') }}
+                    {{ input_widget(form.firstname, 'firstname', placeholder=_('Your first name')) }}
                 </div>
 
                 <div class="col-sm-6">
                     {{ form.lastname.label(class='form-label', for='lastname')}}
-                    {{ input_widget(form.lastname, 'lastname') }}
+                    {{ input_widget(form.lastname, 'lastname', placeholder=_('Your last name')) }}
                 </div>
 
                 <div class="col-12">
                     {{ form.username.label(class='form-label', for='username')}}
                     <div class="input-group">
                         <span class="input-group-text">@</span>
-                        {{ input_widget(form.username, 'username') }}
+                        {{ input_widget(form.username, 'username', placeholder=_('Unique username')) }}
                     </div>
                 </div>
 
                 <div class="col-sm-12">
                     {{ form.email.label(class='form-label', for='email')}}
-                    {{ input_widget(form.email, 'email') }}
+                    {{ input_widget(form.email, 'email', placeholder=_('Your email')) }}
                 </div>
 
                 <div class="col-sm-6">
                     {{ form.password.label(class='form-label', for='password')}}
-                    {{ input_widget(form.password, 'password') }}
+                    {{ input_widget(form.password, 'password', placeholder=_('Strong password')) }}
                 </div>
 
                 <div class="col-sm-6">
                     {{ form.confirm.label(class='form-label', for='confirm')}}
-                    {{ input_widget(form.confirm, 'confirm') }}
+                    {{ input_widget(form.confirm, 'confirm', placeholder=_('Confirm your password')) }}
                 </div>
 
                 <div class="col-sm-12">

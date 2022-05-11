@@ -1,5 +1,5 @@
-from os import abort
-from flask import render_template, request, redirect, flash, url_for, session, current_app
+from datetime import datetime
+from flask import render_template, request, redirect, flash, url_for, session, current_app, abort
 from flask.blueprints import Blueprint
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_babelplus import lazy_gettext as _l
@@ -8,11 +8,11 @@ from sqlalchemy.exc import IntegrityError
 from app import db_session
 from app.models import User
 from app.email.email import send_email
-from app.util import generate_confirm_token, confirm_token
+from app.util.token import generate_confirm_token, confirm_token
 from app.auth.forms import (
                             LoginForm, RegisterForm, 
-                            SettingsForm, EmailResetForm, 
-                            PasswordResetForm, PasswordUpdateForm,
+                            SettingsForm, EmailResetForm,
+                            PasswordUpdateForm, PasswordResetForm,
                             ForgotPassForm)
 
 auth = Blueprint('auth', __name__)
@@ -63,30 +63,68 @@ def login():
         if user:
             login_user(user, form.remember.data)
             if user.confirmed:
-                flash(_l('You\'re successfuly logged in'), 'success')
-                return redirect(url_for('main.home', id=user.id))
+                flash(_l('You\'re successfuly logged in, welcome back'), 'success')
+                return redirect(url_for('main.home'))
             else:
                 return redirect(url_for('auth.unconfirmed'))
     return render_template('auth/login.html', form=form, lang=lang, title=title)
 
-@auth.route('/account/<int:id>/settings', methods=['GET', 'POST'])
+@auth.route('/settings', methods=['GET', 'POST'])
 @login_required
-def setting(id):
-    user = User.query.get_or_404(id)
-    form = SettingsForm()
-    email_form = EmailResetForm()
-    password_form = PasswordUpdateForm()
+def setting():
     title = _l('Settings')
-    if request.method == 'POST' and form.validate_on_submit():
-        pass
-    if request.method == 'POST' and email_form.validate_on_submit():
-        pass
-    if request.method == 'POST' and password_form.validate_on_submit():
-        pass
-    return render_template('auth/settings.html', 
-                            user=user, form=form, lang=session['lang'], 
-                            title=title, email_form=email_form, 
-                            password_form=password_form)
+    lang = session['lang']
+    form = SettingsForm()
+    if form.validate_on_submit():
+        print(f'Form data username[{form.username.data}]')
+        current_user.firstname = form.firstname.data
+        current_user.lastname = form.lastname.data
+        current_user.username = form.username.data
+        current_user.job = form.profossional.data
+        current_user.city = form.city.data
+        current_user.gender = bool(form.gender.data)
+        current_user.birth_date = form.birth_date.data
+        current_user.bio = form.bio.data
+        db_session.add(current_user._get_current_object())
+        db_session.commit()
+        flash(_l('Your informations has been updated'), 'success')
+        return redirect(request.referrer)
+    form.firstname.data = current_user.firstname
+    form.lastname.data = current_user.lastname
+    form.username.data = current_user.username
+    form.bio.data = current_user.bio
+    form.birth_date.data = current_user.birth_date
+    form.city.data = current_user.city
+    form.profossional.data = current_user.job
+    return render_template('auth/settings.html', lang=lang, title=title, form=form)
+
+
+@auth.route('/settings/email', methods=['GET', 'POST'])
+@login_required
+def email():    
+    form = EmailResetForm()
+    title = _l('Update Email')
+    lang = session['lang']
+    if form.validate_on_submit():
+        current_user.email = form.new_email.data
+        db_session.commit()
+        flash(_l('Your email is updated'), 'success')
+        return redirect(url_for('auth.email'))
+    return render_template('auth/update_email.html', lang=lang, title=title, form=form)
+
+
+@auth.route('/settings/password', methods=['GET', 'POST'])
+@login_required
+def update_password():
+    form = PasswordUpdateForm()
+    title = _l('Update Password')
+    lang = session['lang']
+    if form.validate_on_submit():
+        current_user.password = form.new_password.data
+        db_session.commit()
+        flash(_l('Password updated'), 'success')
+        return redirect(url_for('auth.update_password'))
+    return render_template('auth/update_password.html', lang=lang, title=title, form=form)
 
 
 @auth.route('/account/unconfirmed', methods=['GET'])
@@ -135,7 +173,7 @@ def forgot_password():
     title = _l('Forgot Password')
     lang = session['lang']
     form = ForgotPassForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    if form.validate_on_submit():
         user = User.query.filter_by(email=str(form.email.data)).first()
         if user:
             token = generate_confirm_token(user.email)
@@ -179,7 +217,7 @@ def reset_password(id):
     user = User.query.get_or_404(id)
     if not user:
         abort(404)
-    if request.method == 'POST' and form.validate_on_submit():
+    if form.validate_on_submit():
         user.password = str(form.password.data)
         db_session.commit()
         return redirect(url_for('auth.login'))

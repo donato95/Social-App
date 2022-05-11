@@ -9,12 +9,12 @@
         <div class="row g-3">
             <div class="col-sm-12">
                 {{ form.username.label(class='form-label', for='username')}}
-                {{ input_widget(form.username, 'username') }}
+                {{ input_widget(form.username, 'username', placeholder=_('Username')) }}
             </div>
     
             <div class="col-sm-12">
                 {{ form.password.label(class='form-label', for='password')}}
-                {{ input_widget(form.password, 'password') }}
+                {{ input_widget(form.password, 'password', placeholder=_('Password')) }}
             </div>
 
             <div class="col-sm-12">
