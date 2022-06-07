@@ -3,32 +3,32 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<div class="col">
-    {% include 'auth/_nav.html' %}
-    <div class="email-settings bg-white">
-        <h2 class="h3 main-color">{{ _('Change Email') }}</h2>
-        <form class="setting-form">
-            {{ form.hidden_tag() }}
-            <div class="row g-3">
-                <div class="col-sm-12">
-                    {{ form.old_email.label(class='form-label', for='old_email')}}
-                    {{ input_widget(form.old_email, 'old_email', placeholder=_('Enter your current email')) }}
+    <div class="col">
+        {% include 'auth/_nav.html' %}
+        <div class="email-settings bg-white">
+            <h2 class="h3 main-color">{{ _('Change Email') }}</h2>
+            <form class="setting-form">
+                {{ form.hidden_tag() }}
+                <div class="row g-3">
+                    <div class="col-sm-12">
+                        {{ form.old_email.label(class='form-label', for='old_email')}}
+                        {{ input_widget(form.old_email, 'old_email', placeholder=_('Enter your current email')) }}
+                    </div>
+                    
+                    <div class="col-sm-12">
+                        {{ form.new_email.label(class='form-label', for='new_email')}}
+                        {{ input_widget(form.new_email, 'email', placeholder=_('Enter your new email')) }}
+                    </div>
+        
+                    <div class="col-sm-12">
+                        {{ form.password.label(class='form-label', for='password')}}
+                        {{ input_widget(form.password, 'password', placeholder=_('Your current password')) }}
+                    </div>
+                    <div class="col-sm-12">
+                        {{ form.submit(class='form-control btn-primary', id='register') }}
+                    </div>
                 </div>
-                
-                <div class="col-sm-12">
-                    {{ form.new_email.label(class='form-label', for='new_email')}}
-                    {{ input_widget(form.new_email, 'email', placeholder=_('Enter your new email')) }}
-                </div>
-    
-                <div class="col-sm-12">
-                    {{ form.password.label(class='form-label', for='password')}}
-                    {{ input_widget(form.password, 'password', placeholder=_('Your current password')) }}
-                </div>
-                <div class="col-sm-12">
-                    {{ form.submit(class='form-control btn-primary', id='register') }}
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}

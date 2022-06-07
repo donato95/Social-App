@@ -12,29 +12,37 @@
 {% endmacro %}
 
 {% macro pagination_widget(pagination, endpoint, fragment='') %}
-    <ul class="pagination">
-        <li{% if not pagination.has_prev %} class="disabled"{% endif %}>
-            <a href="{% if pagination.has_prev %}{{ url_for(endpoint, page=pagination.prev_num, **kwargs) }}{{ fragment }}{% else %}#{% endif %}">
+    <ul class="pagination mt-3">
+        <li 
+            class="page-item btn-main
+            {% if not pagination.has_prev %}
+                disabled
+            {% endif %}">
+            <a 
+                href="
+                    {% if pagination.has_prev %}
+                        {{ url_for(endpoint, page=pagination.prev_num, **kwargs) }}{{ fragment }}
+                    {% else %}
+                        #
+                    {% endif %}"
+                    class="page-link btn-main">
                 &laquo;
             </a>
         </li>
-        {% for p in pagination.iter_pages() %}
-            {% if p %}
-                {% if p == pagination.page %}
-                    <li class="active">
-                        <a href="{{ url_for(endpoint, page = p, **kwargs) }}{{ fragment }}">{{ p }}</a>
-                    </li>
+     
+        <li 
+            class="page-item btn-main
+            {% if not pagination.has_next %}
+                disabled
+            {% endif %}">
+            <a 
+                href="
+                {% if pagination.has_next %}
+                    {{ url_for(endpoint, page=pagination.next_num, **kwargs) }}{{ fragment }}
                 {% else %}
-                    <li>
-                        <a href="{{ url_for(endpoint, page = p, **kwargs) }}{{ fragment }}">{{ p }}</a>
-                    </li>
-                {% endif %}
-            {% else %}
-                <li class="disabled"><a href="#">&hellip;</a></li>
-            {% endif %}
-        {% endfor %}
-        <li {% if not pagination.has_next %} class="disabled"{% endif %}>
-            <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.next_num, **kwargs) }}{{ fragment }}{% else %}#{% endif %}">
+                    #
+                {% endif %}"
+                class="page-link">
                 &raquo;
             </a>
         </li>
@@ -61,4 +69,16 @@
         {% endif %}
         <span>{{ date }}</span> 
     </div>
+{% endmacro %}
+
+{% macro get_flashed() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        <div class="container position-absolute w-100 top-0 mt-3 text-center">
+            {%if messages %}
+                {% for category, message in messages %}
+                    <p class="alert alert-{{category}}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div> 
+    {% endwith %} 
 {% endmacro %}

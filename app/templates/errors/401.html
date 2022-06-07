@@ -2,9 +2,9 @@
 {% block title%} Unautherized Access {% endblock%}
 
 {% block main %}
-<section class="error">
-    <h1>401</h1>
-    <p class="p error-message text-style text-color">{{ _('This page can not be reach') }}</p>
-    {% include 'errors/nav.html' %}
-</section>
+    <section class="error">
+        <h1>401</h1>
+        <p class="p error-message text-style text-color">{{ _('This page can not be reach') }}</p>
+        {% include 'errors/nav.html' %}
+    </section>
 {% endblock %}

@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, request, redirect, flash, url_for, session, current_app, abort
+from flask import render_template, request, redirect, flash, url_for, session, current_app, abort, g
 from flask.blueprints import Blueprint
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_babelplus import lazy_gettext as _l
@@ -21,6 +21,7 @@ auth = Blueprint('auth', __name__)
 def register():
     form = RegisterForm()
     title = _l('Create Account')
+    # lang = request.accept_languages.best_match(current_app.config['LANGUAGES'])
     if request.method == 'POST' and form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -33,15 +34,17 @@ def register():
         try:
             db_session.add(user)
             db_session.commit()
-            token = generate_confirm_token(user.email)
-            token_url = url_for('auth.confirm', token=token, _external=True)
-            header = _l('Welcome! Thanks for signing up. Please follow this link to activate your account:')
-            html = render_template('layout/email.html', username=user.username, token_url=token_url, header=header)
-            send_email(
-                subject=_l('Email confirmation'), 
-                recipient=[user.email],
-                sender=current_app.config['MAIL_USERNAME'],
-                html_body=html)
+            user.add_self_follows()
+            user.add_chat()
+            # token = generate_confirm_token(user.email)
+            # token_url = url_for('auth.confirm', token=token, _external=True)
+            # header = _l('Welcome! Thanks for signing up. Please follow this link to activate your account:')
+            # html = render_template('layout/email.html', username=user.username, token_url=token_url, header=header)
+            # send_email(
+            #     subject=_l('Email confirmation'), 
+            #     recipient=[user.email],
+            #     sender=current_app.config['MAIL_USERNAME'],
+            #     html_body=html)
             flash(_l('You\'re successfuly registered, Check your email for confirmation'), 'success')
             return redirect(url_for('auth.login'))
         except IntegrityError:
@@ -147,7 +150,8 @@ def unconfirmed():
                 html_body=html)
         except:
             logout_user()
-            return redirect(url_for('auth.login'))
+            render_template('auth/unconfirmed.html', lang=lang, title=title)
+            # return redirect(url_for('auth.login'))
     return render_template('auth/unconfirmed.html', lang=lang, title=title)
 
 
@@ -223,13 +227,13 @@ def reset_password(id):
         return redirect(url_for('auth.login'))
     return render_template('auth/passreset.html', lang=lang, title=title, form=form)
 
-
+# 
 @auth.route('/account/<int:id>/delete', methods=['GET', 'POST'])
 @login_required
 def delete(id):
     id = id
     return render_template('main/account.html', id=id)
-
+# m
 
 @auth.route('/logout', methods=['GET'])
 @login_required

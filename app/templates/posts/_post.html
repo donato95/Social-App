@@ -1,4 +1,4 @@
-<article class="bg-white border-bottom post main-color">
+<article class="bg-white border-bottom post main-color" id="post">
     <div class="post-header">
         <div class="author position-relative">
             <a 
@@ -107,7 +107,7 @@
                 <span class="count">{{ _(post.reposts | count) }}</span>
             </a>
         {% endif %}
-        <a href="#" class="main-color">
+        <a href="{{ url_for('posts.post', id=post.id) }}" class="main-color">
             <i class="fa fa-comment-o"></i>
             {{ _(post.comments | count) }}
         </a>

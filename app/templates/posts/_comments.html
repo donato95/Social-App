@@ -37,7 +37,7 @@
                 class="link-color">
                 @{{ comment.commenter.username }}
             </a>
-            <span class="d-block text-muted">{{ comment.published_date }}</span>
+            <span class="d-block text-muted">{{ moment(comment.published_date).format('LLL') }}</span>
         </div>
     </div>
     <div class="comment-content">

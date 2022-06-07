@@ -1,91 +1,86 @@
 {% extends 'layout/index.html' %}
 
 {% block main %}
-
-<div class="row mt-2">
-    <aside class="col-md-3 user-aside">
-        <div class="bg-white">
-            <header class="text-center">
-                <div>
-                    <a href="{{ url_for('user.account', id=current_user.id) }}">
-                        <img 
-                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                            alt="" 
-                            class="w-100 img-thumbnail">
+    <div class="row mt-2">
+        <aside class="col-md-3 user-aside">
+            <div class="bg-white">
+                <header class="text-center">
+                    <div>
+                        <a href="{{ url_for('user.account', id=current_user.id) }}">
+                            <img 
+                                src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                                alt="" 
+                                class="w-100 img-thumbnail">
+                        </a>
+                    </div>
+                    <a href="{{ url_for('user.account', id=current_user.id) }}" class="text-muted">
+                        <span class="h4">{{ current_user.firstname + ' ' + current_user.lastname }}</span>
+                    </a>
+                </header>
+                <nav class="mt-2">
+                    <a 
+                        href="{{ url_for('main.home') }}" 
+                        class="d-block link-color">
+                        <i class="fa fa-home"></i>
+                        {{ _('Home') }}
+                    </a>
+                    <a 
+                        href="{{ url_for('main.notifications', action='all') }}" 
+                        class="d-block link-color">
+                        <i class="fa fa-bell"></i>
+                        {{ _('Notifications') }}
+                        {% set new_notifications = current_user.new_notifications() %}
+                        {% if new_notifications %}
+                            <span 
+                                class="badge link-color"
+                                id="notis_count"
+                                {% if new_notifications %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif%};>
+                                {{ _(new_notifications) }}
+                            </span>
+                        {% endif %}
+                    </a>
+                    <a 
+                        href="{{ url_for('user.messages') }}" 
+                        class="d-block link-color">
+                        <i class="fa fa-envelope"></i>
+                        {{ _('Messages') }}
+                        {% set new_messages = current_user.new_messages() %}
+                        {% if new_messages %}
+                            <span 
+                                class="badge link-color"
+                                id="messages_count"
+                                {% if new_messages %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif%};>
+                                {{ _(new_messages) }}
+                            </span>
+                        {% endif %}
+                    </a>
+                    <a 
+                        href="{{ url_for('user.activities', id=current_user.id, action='bookmarks') }}" 
+                        class="d-block link-color">
+                        <i class="fa fa-bookmark"></i>
+                        {{ _('Bookmarks') }}
+                    </a>
+                    <a 
+                        href="{{ url_for('user.account', id=current_user.id) }}" 
+                        class="d-block link-color">
+                        <i class="fa fa-user-circle"></i>
+                        {{ _('Account') }}
+                    </a>
+                    <a 
+                        href="{{ url_for('auth.setting') }}" 
+                        class="d-block link-color">
+                        <i class="fa fa-cog"></i>
+                        {{ _('Settings') }}
+                    </a>
+                </nav>
+                <div class="mt-auto logout-link">
+                    <a href="{{ url_for('auth.logout') }}" class="link-color">
+                        <i class="fa fa-sign-out"></i>
+                        Logout
                     </a>
                 </div>
-                <a href="{{ url_for('user.account', id=current_user.id) }}" class="text-muted">
-                    <span class="h4">{{ current_user.firstname + ' ' + current_user.lastname }}</span>
-                </a>
-            </header>
-            <nav class="mt-2">
-                <a 
-                    href="{{ url_for('main.home') }}" 
-                    class="d-block link-color">
-                    <i class="fa fa-home"></i>
-                    {{ _('Home') }}
-                </a>
-                <a 
-                    href="{{ url_for('main.notifications', action='all') }}" 
-                    class="d-block link-color">
-                    <i class="fa fa-bell"></i>
-                    {{ _('Notifications') }}
-                    {% set new_notifications = current_user.new_notifications() %}
-                    {% if new_notifications %}
-                        <span 
-                            class="badge link-color"
-                            id="notis_count"
-                            style="visibility:{% if new_notifications %} visible {% else %} hidden {% endif%};">
-                            {{ _(new_notifications) }}
-                        </span>
-                    {% endif %}
-                </a>
-                <a 
-                    href="{{ url_for('user.messages') }}" 
-                    class="d-block link-color">
-                    <i class="fa fa-envelope"></i>
-                    {{ _('Messages') }}
-                    {% set new_messages = current_user.new_messages() %}
-                    {% if new_messages %}
-                        <span 
-                            class="badge link-color"
-                            id="messages_count"
-                            style="visibility:{% if new_messages %} visible {% else %} hidden {% endif%};">
-                            {{ _(new_messages) }}
-                        </span>
-                    {% endif %}
-                </a>
-                <a 
-                    href="{{ url_for('user.activities', id=current_user.id, action='bookmarks') }}" 
-                    class="d-block link-color">
-                    <i class="fa fa-bookmark"></i>
-                    {{ _('Bookmarks') }}
-                </a>
-                <a 
-                    href="{{ url_for('user.account', id=current_user.id) }}" 
-                    class="d-block link-color">
-                    <i class="fa fa-user-circle"></i>
-                    {{ _('Account') }}
-                </a>
-                <a 
-                    href="{{ url_for('auth.setting') }}" 
-                    class="d-block link-color">
-                    <i class="fa fa-cog"></i>
-                    {{ _('Settings') }}
-                </a>
-            </nav>
-            <div class="mt-auto logout-link">
-                <a href="{{ url_for('auth.logout') }}" class="link-color">
-                    <i class="fa fa-sign-out"></i>
-                    Logout
-                </a>
             </div>
-        </div>
-    </aside>
-    {% block content %}
-    
-    {% endblock %}
-    
-</div>
-
+        </aside>
+        {% block content %}{% endblock %}
+    </div>
 {% endblock %}

@@ -1,37 +1,26 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}" style="{% if lang == 'ar' %}direction:rtl;{% else %}direction:ltr;{% endif %}">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="shortcut icon" href="{{ url_for('static', filename='site-images/favicon.png') }}" type="image/x-icon">
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor/icons.css') }}">
-        <link rel="stylesheet" 
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-            crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
-        {#{{ moment.include_moment() }}#}
-        <title>{% block title %} {% endblock %}</title>
-    </head>
+<html lang="{{ lang }}" {% if lang == 'ar' %}style="direction:rtl;"{% else %}syle="direction:ltr;"{% endif %}>
+    {% block head %}
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="shortcut icon" href="{{ url_for('static', filename='site-images/favicon.png') }}" type="image/x-icon">
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor/icons.css') }}">
+            <link rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+                integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+                crossorigin="anonymous">
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+            <title>{% block title %} {% endblock %}</title>
+        </head>
+    {% endblock %}
+    {% from 'macros.html' import get_flashed %}
     <body class="font-muthanna">
-        <header>
-
-        </header>
-        <div class="container mt-3 text-center">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {%if messages %}
-                    {% for category, message in messages %}
-                        <p class="alert alert-{{category}}">{{ message }}</p>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </div>  
+        {{ get_flashed() }}
         <main class="container">
             <div class="postition-absolute json-message alert alert-success d-none justyfy-content-between align-items-center">
-                <p class="d-inline-block w-100 mb-0">
-                    
-                </p>
+                <p class="d-inline-block w-100 mb-0"></p>
                 <i class="fa fa-close"></i>
             </div>
             {% block main %}{% endblock %}
@@ -39,18 +28,18 @@
         <hr class="mt-4">
         <footer class="text-center">
             {% block footer %}
-            <p>
-                All &copy; reserved 
-                <a href="#/">Home</a>Template by 
-                <a href="https://twitter.com/">@donato</a>.
-            </p>
-            <p>
-                <a href="{{ url_for('main.lang', name='ar') }}">العربية</a> - 
-                <a href="{{ url_for('main.lang', name='en') }}">English</a>
-            </p>
-            <p>
-              <a href="#">Back to top</a>
-            </p>
+                <p>
+                    All &copy; reserved 
+                    <a href="#/">Home</a>Template by 
+                    <a href="https://twitter.com/chymos95">@donato</a>.
+                </p>
+                <p>
+                    <a href="{{ url_for('main.lang', name='ar') }}">العربية</a> - 
+                    <a href="{{ url_for('main.lang', name='en') }}">English</a>
+                </p>
+                <p>
+                <a href="#">Back to top</a>
+                </p>
             {% endblock %}
         </footer>
         {% block scripts %}
@@ -59,13 +48,11 @@
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
             <script src="{{ url_for('static', filename='js/vendor/jquery3.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/vendor/socket.io.min.js') }}"></script>
             {% if current_user.is_authenticated %}
                 <script>
-                    /**
-                    * 
-                    * @param {Object} selector 
-                    * @param {String} n 
-                    */
+                    let csrf_token = "{{ csrf_token() }}"
+                    
                     function set_new_count(selector, n) {
                         $(selector).text(n)
                         $(selector).css('visibility', n ? 'visible' : 'hidden')
@@ -82,6 +69,14 @@
                     }
 
                     $(function() {
+                        $.ajaxSetup({
+                            beforeSend: function(xhr, settings) {
+                                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                                }
+                            }
+                        })
+
                         get_notifications("{{ url_for('main.notifications', action='json') }}", '#notis_count')
                         get_notifications("{{ url_for('main.notifications', action='messages') }}", '#messages_count')
                         let close = $('i.fa-close')

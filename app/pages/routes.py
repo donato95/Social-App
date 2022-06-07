@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, session, url_for
+from flask import redirect, request, render_template, session, url_for, g
 from flask.blueprints import Blueprint
 from flask_login import current_user
 from flask_babelplus import lazy_gettext as _l
@@ -6,17 +6,11 @@ from flask_babelplus import lazy_gettext as _l
 
 pages = Blueprint('pages', __name__)
 
-@pages.route('/', methods=['GET'])
-@pages.route('/home', methods=['GET'])
+@pages.route('/home', methods=['GET', 'POST'])
 def home():
-    title = _l('Home')
-    lang = ''
-    if current_user.is_authenticated:
-        lang = current_user.local_lang
-    if current_user.is_anonymous:
-        lang = session['lang']
-    return render_template('pages/home.html', lang=lang, title=title)
-
+    lang = session['lang']
+    title = _l('Bees')
+    return render_template('/pages/home.html', lang=lang, title=title)
 
 @pages.route('/about', methods=['GET'])
 def about():
@@ -30,3 +24,9 @@ def contact():
     title = _l('Contact Us')
     lang = session['lang']
     return render_template('pages/contact.html', lang=lang, title=title)
+
+@pages.route('/terms', methods=['GET', 'POST'])
+def terms():
+    lang = session['lang']
+    title = _l('Terms and Privacy')
+    return render_template('pages/terms.html', lang=lang, title=title)

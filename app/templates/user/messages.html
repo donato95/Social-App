@@ -3,72 +3,60 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-
-<section class="my-contacts col">
-    <div class="">
-        <header class="d-flex flex-row justify-content-between align-items-center">
-            <h3 class="main-color">Chat</h3>
-            <div class="order">
-                <a href="#" class="link-color">Newer</a>
-                <i class="fa fa-minus"></i> 
-                <a href="#" class="link-color">Older</a>
+    <section class="my-contacts col">
+        <div class="">
+            <header class="d-flex flex-row justify-content-between align-items-center">
+                <h3 class="main-color">Chat</h3>
+                <div class="order">
+                    <a href="#" class="link-color">Newer</a>
+                    <i class="fa fa-minus"></i> 
+                    <a href="#" class="link-color">Older</a>
+                </div>
+            </header>
+            <div class="search-form bg-white">
+                <form action="" method="post">
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <input 
+                            type="search" 
+                            class="form-control" 
+                            id="inputGroupSelect03" 
+                        />
+                        </div>
+                </form>
             </div>
-        </header>
-        <div class="search-form bg-white">
-            <form action="" method="post">
-                <div class="input-group mb-3">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
-                    <input 
-                        type="search" 
-                        class="form-control" 
-                        id="inputGroupSelect03" 
-                    />
-                    </div>
-            </form>
-        </div>
-        <div class="message bg-white border-bottom">
-            {% for message in messages %}
-                <div class="d-flex flex-row justify-space-between">
-                    <div class="header">
-                        <div>
+            <div class="message bg-white border-bottom">
+                {% for message in messages %}
+                    <div class="d-flex flex-row justify-space-between border-bottom">
+                        <div class="img-holder">
                             <img 
                                 src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
                                 alt="" 
                                 class="img-thumbnail">
-                            <a 
-                                class="link-color" 
-                                href="{{ url_for('user.account', id=message.author.id) }}">
-                                @ {{ message.author.username }}
-                            </a>
+                            
                         </div>
+                        <a 
+                            class="main-color" 
+                            href="{{ url_for('user.chat', id=message.chat_id, username=message.author.username) }}">
+                            {{ message.text }}
+                        </a>
                     </div>
-                    <span class="timestamp text-muted">{{ moment(message.timestamp).format('LLL') }}</span>
-                </div>
-                <a 
-                    href="{{ url_for('user.send_message', username=message.author.username) }}">
-                    <div class="content">
-                        <p class="text-style main-color">
-                            {{ message.body }}
-                        </p>
-                    </div>
-                </a>
-            {% endfor %}
+                {% endfor %}
+            </div>
+            <ul class="pagination mt-4">
+                <li class="page-item">
+                    <a class="page-link btn-main" href="#" aria-label="Previous">
+                        <span aria-hidden="true">«</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link btn-main" href="#" aria-label="Next">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="pagination mt-4">
-            <li class="page-item">
-                <a class="page-link btn-main" href="#" aria-label="Previous">
-                    <span aria-hidden="true">«</span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link btn-main" href="#" aria-label="Next">
-                    <span aria-hidden="true">»</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-</section>
-
+    </section>
 {% endblock %}

@@ -1,0 +1,27 @@
+
+body {
+    font-size: .875rem;
+    background-color: #fff;
+}
+main {
+    min-width: 100%;
+    margin: 0;
+    padding: 0 !important;
+}
+hr {
+    margin: 0 0 15px
+}
+.heighlight {
+    margin: 15px 0;
+  }
+  .heighlight-item div {
+    padding: 10px;
+    border-radius: 5px;
+  }
+.table-responsive i {
+    font-size: 18px;
+    margin: 0px 0;
+}
+.register-form {
+    width: 100%;
+}

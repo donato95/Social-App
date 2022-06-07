@@ -5,7 +5,7 @@ from flask_babelplus import lazy_gettext as _l, get_locale
 
 from app import db_session, login_manager
 from app.posts.forms import PostForm
-from app.models import Posts, User, Notifications
+from app.models import Posts, User, Roles, Notifications
 
 main = Blueprint('main', __name__)
 
@@ -13,10 +13,9 @@ main = Blueprint('main', __name__)
 def load_user(id):
     return User.query.get(id)
 
-@main.before_request
+@main.before_app_request
 def before_request():
     g.locale = str(get_locale())
-
 
 @main.route('/language/<string:name>', methods=['GET'])
 def lang(name):
@@ -29,7 +28,6 @@ def lang(name):
     return redirect(request.referrer)
 
 @main.route('/', methods=['GET', 'POST'])
-@main.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
     lang = session['lang']
@@ -44,9 +42,9 @@ def home():
         db_session.add(post)
         db_session.commit()
         return redirect(request.referrer)
-    return render_template('main/home.html', lang=lang, title=title, 
+    to_follow = User.query.filter(User.id != current_user.id).limit(3)
+    return render_template('main/home.html', lang=lang, title=title, to_follow=to_follow, 
                             post_form=post_form, posts=posts, pagination=pagination)
-
 
 @main.route('/notifications/<action>', methods=['GET'])
 @login_required
@@ -54,6 +52,7 @@ def notifications(action):
     lang = session['lang']
     title = _l('Notifications')
     notis = None
+    page = request.args.get('page', 1, type=int)
     if action == 'json':
             count = current_user.new_notifications()
             return jsonify({"count": count })
@@ -61,7 +60,13 @@ def notifications(action):
         count = current_user.new_messages()
         return jsonify({"count": count})
     if action == 'all':
-        notis = Notifications.query.filter_by(user=current_user)\
-            .filter(Notifications.seen == False).order_by(Notifications.action_date.desc()).all()
-    return render_template('main/notifications.html', lang=lang, title=title, notis=notis)
-
+        query = Notifications.query.filter_by(user=current_user)
+        unseen = query.filter_by(seen=False).all()
+        for noti in unseen:
+            noti.seen = True
+            db_session.commit()
+        pagination = query.order_by(Notifications.action_date.desc()).paginate(page, per_page=current_app.config['NOTIFICATIONS_PER_PAGE'], error_out=False)
+        notis = pagination.items
+    to_follow = User.query.filter(User.id != current_user.id).limit(3)
+    return render_template('main/notifications.html', lang=lang, title=title, 
+                            notis=notis, pagination=pagination, to_follow=to_follow)

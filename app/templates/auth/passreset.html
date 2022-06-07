@@ -3,25 +3,25 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block main %}
-<div class="mt-4">
-    <form method="post" class="reset-form bg-white">
-        {{ form.hidden_tag() }}
-        <div class="row g-3">
-            <div class="col-sm-12">
-                {{ form.password.label(class='form-label', for='password')}}
-                {{ input_widget(form.password, 'password') }}
-            </div>
-    
-            <div class="col-sm-12">
-                {{ form.confirm.label(class='form-label', for='confirm')}}
-                {{ input_widget(form.confirm, 'password') }}
-            </div>
+    <div class="mt-4">
+        <form method="post" class="reset-form bg-white">
+            {{ form.hidden_tag() }}
+            <div class="row g-3">
+                <div class="col-sm-12">
+                    {{ form.password.label(class='form-label', for='password')}}
+                    {{ input_widget(form.password, 'password') }}
+                </div>
+        
+                <div class="col-sm-12">
+                    {{ form.confirm.label(class='form-label', for='confirm')}}
+                    {{ input_widget(form.confirm, 'password') }}
+                </div>
 
-            <div class="col-sm-12">
-                {{ form.submit(class='form-control btn-primary') }}
+                <div class="col-sm-12">
+                    {{ form.submit(class='form-control btn-primary') }}
+                </div>
             </div>
-        </div>
-      </form>
-    </main>
-</div>
+        </form>
+        </main>
+    </div>
 {% endblock %}

@@ -2,39 +2,79 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<secion class="chat col">
-    <div class="content mb-2 d-flex flex-row align-items-start">
-        <div class="chat-messages">
-            {% for message in msgs %}
-                <div class="msg mb-2">
-                    <div>
-                        <div class="body w-100 received border-bottom bg-white">
-                            <p>{{ message.body }}</p>
-                            <span class="d-block text-muted">
-                                {{ moment(message.timestamp).format('LLL') }}
-                            </span>
-                        </div>
-                        {#% if message.replie %}
-                            {% for replie in message.replie %}
-                                <div class="body w-100 replie border-bottom bg-white">
-                                    <p>{{ replie.body }}</p>
-                                    <span class="d-block text-muted">
-                                        {{ moment(replie.timestamp).format('LLL') }}
-                                    </span>
-                                </div>
-                            {% endfor %}
-                        {% endif %#}
-                    </div>
-                </div>
-            {% endfor %}
+    <section class="chat col">
+        <div class="bg-white">
+            <header class="border-bottom">
+                <h4>{{ user.firstname + ' ' + user.lastname }}</h4>
+            </header>
+            <div class="messages">
+                {% if messages %}
+                    {% for message in messages %}
+                        <p 
+                            class="{% if message.author == current_user %} main-bg-color {%else%} main-color gray {%endif%}d-flex justify-content-between text-style content">
+                            {{ message.text }}
+                            <span class="timestamp">{{ moment(message.timestamp).format('LLL') }}</span>
+                        </p>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-messages">{{ _('There is no messages yet') }}</p>
+                {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="chat-form">
-        <form method="post" id="chat-form">
-            {{ form.hidden_tag() }}
-            {{ form.text(class='form-control', id='message-input') }}
-            {{ form.submit(class='btn btn-main mt-2', id='send-btn') }}
-        </form>
-    </div>
-</section>
+        <div class="chat-form mt-4">
+            <form method="POST" id="chat-form">
+                <textarea 
+                    placeholder="Send message..." 
+                    name="message" id="message" class="form-control"
+                ></textarea>
+                <input type="submit" value="Send" class="btn btn-main mt-2" />
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {% if current_user.is_authenticated %}
+        <script>
+            const socket = io.connect("{{ url_for('main.home') }}")
+            let text = $('textarea')
+
+            $(function() {
+                $('#chat-form').on('submit', function(e) {
+                    e.preventDefault()
+                    console.log(text.val())
+                    socket.emit('send_message', {
+                        sender_id: "{{ current_user.id }}",
+                        receiver_id: "{{ user.id }}",
+                        chat_id: "{{ chat.id }}",
+                        message: text.val().trim()
+                    })
+                    text.val('')
+                })
+                socket.on('received_message', function(data) {
+                    $('.no-messages').remove()
+                    if (data.sender_id == "{{ current_user.id }}"){
+                        $('.messages')
+                        .append(
+                            `<p class="main-bg-color content text-style content d-flex justify-content-between">
+                                ${data.message}
+                                <span class="timestamp">
+                                    ${moment(data.timestamp).format("LLL")}
+                                </span>
+                            </p>`)
+                    } else {
+                        $('.messages')
+                        .append(
+                            `<p class="main-color gray content text-style content d-flex justify-content-between">
+                                ${data.message}
+                                <span class="timestamp">
+                                    ${moment(data.timestamp).format("LLL")}
+                                </span>
+                            </p>`)
+                    }
+                })
+            })
+        </script> 
+    {% endif %}
 {% endblock %}

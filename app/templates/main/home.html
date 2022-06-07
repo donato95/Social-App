@@ -1,26 +1,27 @@
 {% extends 'main/index.html' %}
+{% from 'macros.html' import pagination_widget %}
 {% block title%} {{ title }} {% endblock%}
 
 {% block content %}
-
-<section class="home-page col">
-    <div class="bg-white mb-3">
-        <form method="post" class="post-form bg-white">
-            {{ post_form.hidden_tag() }}
-            {{ post_form.post.label(class='form-label', for='post')}}
-            {{ post_form.post(class='form-control', id='post') }}
-            {{ post_form.submit(class='btn btn-main mt-2') }}
-        </form>
-    </div>
-    {% if posts %}
-        {% for post in posts %}
-            {% include 'posts/_post.html' %}
-        {% endfor %}
-    {% endif %}
-</section>
-
-{% include 'main/_to_follow.html' %}
-
+    <section class="home-page col">
+        <div class="bg-white mb-3">
+            <form method="post" class="post-form bg-white">
+                {{ post_form.hidden_tag() }}
+                {{ post_form.post.label(class='form-label', for='post')}}
+                {{ post_form.post(class='form-control', id='post-input') }}
+                {{ post_form.submit(class='btn btn-main mt-2') }}
+            </form>
+        </div>
+        {% if posts %}
+            {% for post in posts %}
+                {% include 'posts/_post.html' %}
+            {% endfor %}
+            {% if pagination %}
+                {{ pagination_widget(pagination, 'main.home') }}
+            {% endif %}
+        {% endif %}
+    </section>
+    {% include 'main/_to_follow.html' %}
 {% endblock %}
 
 {% block scripts %}

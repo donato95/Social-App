@@ -1,13 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import (StringField, DateField, TextAreaField,
                             PasswordField, BooleanField, EmailField, 
-                            RadioField, SubmitField)
+                            RadioField, SelectField, SubmitField)
 from wtforms.validators import DataRequired, Optional, Email, EqualTo, ValidationError
 from flask_babelplus import lazy_gettext as _l
 from flask_bcrypt import check_password_hash
 from flask_login import current_user
 
-from app.models import User
+from app.models import User, Roles
 from app.util.validators import length, empty_check
 
 
@@ -190,4 +190,5 @@ class ChatForm(FlaskForm):
 
     def validate_text(self, field):
         empty_check(field)
+
 

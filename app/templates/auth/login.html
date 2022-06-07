@@ -3,36 +3,36 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block main %}
-<div class="mt-4">
-    <form method="post" class="login-form bg-white">
-        {{ form.hidden_tag() }}
-        <div class="row g-3">
-            <div class="col-sm-12">
-                {{ form.username.label(class='form-label', for='username')}}
-                {{ input_widget(form.username, 'username', placeholder=_('Username')) }}
-            </div>
-    
-            <div class="col-sm-12">
-                {{ form.password.label(class='form-label', for='password')}}
-                {{ input_widget(form.password, 'password', placeholder=_('Password')) }}
-            </div>
+    <div class="mt-4">
+        <form method="post" class="login-form bg-white">
+            {{ form.hidden_tag() }}
+            <div class="row g-3">
+                <div class="col-sm-12">
+                    {{ form.username.label(class='form-label', for='username')}}
+                    {{ input_widget(form.username, 'username', placeholder=_('Username')) }}
+                </div>
+        
+                <div class="col-sm-12">
+                    {{ form.password.label(class='form-label', for='password')}}
+                    {{ input_widget(form.password, 'password', placeholder=_('Password')) }}
+                </div>
 
-            <div class="col-sm-12">
-                <div class="form-check">
-                    {{ form.remember(id='remember', class='form-check-input') }}
-                    {{ form.remember.label(for='remember', class='form-check-label') }}
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        {{ form.remember(id='remember', class='form-check-input') }}
+                        {{ form.remember.label(for='remember', class='form-check-label') }}
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <a href="{{ url_for('auth.forgot_password') }}">{{ _('Forgot password?') }}</a>
+                </div>
+
+                <div class="col-sm-12">
+                    {{ form.submit(class='form-control btn-primary') }}
                 </div>
             </div>
-
-            <div class="col-sm-12">
-                <a href="{{ url_for('auth.forgot_password') }}">{{ _('Forgot password?') }}</a>
-            </div>
-
-            <div class="col-sm-12">
-                {{ form.submit(class='form-control btn-primary') }}
-            </div>
-        </div>
-      </form>
-    </main>
-</div>
+        </form>
+        </main>
+    </div>
 {% endblock %}

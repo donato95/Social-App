@@ -1,10 +1,11 @@
 from time import time
-import json
 from datetime import datetime
+
 from flask import current_app, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from flask_bcrypt import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer as Serializer
+
 from app import db, login_manager, db_session
 
 
@@ -25,9 +26,9 @@ class Roles(db.Model):
     @staticmethod
     def add_roles():
         roles = {
-            'USER': Permessions.USER,
-            'MODERATOR': Permessions.MODERATOR,
-            'ADMIN': Permessions.ADMIN
+            'USER': [Permessions.USER],
+            'MODERATOR': [Permessions.MODERATOR],
+            'ADMIN': [Permessions.ADMIN]
         }
         default = roles['USER']
         for r in roles:
@@ -85,13 +86,19 @@ class User(db.Model, UserMixin):
     booked = db.relationship('PostBookmark', backref='booker', lazy=True)
     reposted = db.relationship('PostRepost', backref='reposter', lazy=True)
     comments = db.relationship('Comments', backref='commenter', lazy=True)
-    replier = db.relationship('MessagesReplies', backref='replier', lazy=True)
+    conversations = db.relationship('Chat', backref='user', lazy='dynamic')
     setter = db.relationship('Notifications',
                             foreign_keys='Notifications.setter_id',
                             backref='creater', lazy='dynamic')
     getter = db.relationship('Notifications',
                             foreign_keys='Notifications.getter_id',
                             backref='user', lazy='dynamic')
+    messages_sent = db.relationship('Messages',
+                            foreign_keys='Messages.sender_id',
+                            backref='author', lazy='dynamic')
+    messages_received = db.relationship('Messages',
+                            foreign_keys='Messages.receiver_id',
+                            backref='recipent', lazy='dynamic')
     followed = db.relationship('Follows',
                                 foreign_keys=[Follows.follower_id],
                                 backref=db.backref('follower', lazy='joined'),
@@ -102,14 +109,6 @@ class User(db.Model, UserMixin):
                                 backref=db.backref('followed', lazy='joined'),
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
-    messages_sent = db.relationship('Message',
-                                    foreign_keys='Message.sender_id',
-                                    backref='author',
-                                    lazy='dynamic')
-    messages_received = db.relationship('Message',
-                                        foreign_keys='Message.recipient_id',
-                                        backref='recipient',
-                                        lazy='dynamic')
     last_read_time = db.Column(db.DateTime)
 
     def __init__(self, **kwargs):
@@ -119,6 +118,7 @@ class User(db.Model, UserMixin):
                 self.role = Roles.query.filter_by(name='ADMIN').first()
             else:
                 self.role = Roles.query.filter_by(default=True).first()
+                db_session.commit()
     
     @property
     def password(self):
@@ -133,17 +133,33 @@ class User(db.Model, UserMixin):
         return Posts.query.join(Follows, Follows.followed_id == Posts.user_id)\
             .filter(Follows.follower_id == self.id, Posts.is_public == True)
     
-    @staticmethod
-    def add_self_follows():
-        for user in User.query.all():
-            if not user.is_following(user):
-                user.follow(user)
-                db.session.add(user)
-                db.session.commit()
+    @classmethod
+    def count(cls):
+        cls.query.count()
+    
+    def add_self_follows(self):
+        if not self.is_following(self):
+            self.follow(self)
+            db.session.add(self)
+            db.session.commit()
+    
+    def add_chat(self):
+        if not self.has_chat():
+            chat = Chat(user_id=self.id)
+            db_session.add(chat)
+            db_session.commit()
+            
+    def has_chat(self):
+        if Chat.query.filter_by(user=self).first():
+            return True
+        return False
+    
+    def can(self, perm):
+        return self.role is not None and self.role.has_perm(perm)
     
     def new_messages(self):
-        return Message.query.filter_by(recipient=self).filter(Message.seen == False).count()
-    
+        return Messages.query.filter_by(recipent=self, read=False).count()
+
     def new_notifications(self):
         return Notifications.query.filter_by(user=self).filter(Notifications.seen == False).count()
 
@@ -152,16 +168,16 @@ class User(db.Model, UserMixin):
             name=name, creater=user, user=self, is_message=is_message, 
             post_id=post, vote_id=vote)
         db_session.add(n)
-
+    
     def is_following(self, user):
         if user is None:
             return False
-        return self.followed.filter_by(followed=user).first() is not None
+        return self.followed.filter_by(followed_id=user.id).first() is not None
     
     def is_followed_by(self, user):
         if user is None:
             return False
-        return self.followers.filter_by(follower=user).first() is not None
+        return self.followers.filter_by(follower_id=user.id).first() is not None
     
     def follow(self, user):
         if not self.is_following(user):
@@ -177,7 +193,7 @@ class User(db.Model, UserMixin):
         return PostLikes.query.filter_by(post_id = post.id, user_id = self.id).count() > 0
     
     def like(self, post):
-        if not self.has_repost(post):
+        if not self.has_liked(post):
             like = PostLikes(post_id=post.id, user_id=self.id)
             db_session.add(like)
     
@@ -234,12 +250,9 @@ class User(db.Model, UserMixin):
     def to_dict(self, with_email=False) -> dict:
         data = {
             'id': self.id,
-            'fullname': self.full_name,
+            'fullname': f'{self.firstname} {self.lastname}',
             'username': self.username,
-            '_links': {
-               'url': url_for('user.account', id=self.id),
-                'profile_pic': self.user_image
-            }
+            'url': url_for('user.account', id=self.id),
         }
         if with_email:
             data['email'] = self.email
@@ -386,38 +399,6 @@ class Upvotes(db.Model):
         return f'<Upvotes {self.user_id}>'
 
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    body = db.Column(db.Text)
-    seen = db.Column(db.Boolean, default=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    replie = db.relationship('MessagesReplies', backref='message_replie', lazy=True)
-
-    def __init__(self, **kwargs) -> None:
-        super(Message, self).__init__(**kwargs)
-
-    def __repr__(self) -> str:
-        return f'<Message {self.id}>'
-
-
-class MessagesReplies(db.Model):
-    __tablename__ = 'messages_replies'
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text)
-    seen = db.Column(db.Boolean, default=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    def __init__(self, **kwargs) -> None:
-        super(MessagesReplies, self).__init__(**kwargs)
-
-    def __repr__(self) -> str:
-        return f'<MessagesReplies {self.id}>'
-
-
 class Notifications(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
@@ -436,4 +417,32 @@ class Notifications(db.Model):
 
     def __repr__(self) -> str:
         return f'<Notifications {self.id}>'
+
+
+class Messages(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    read = db.Column(db.Boolean, default=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'))
+
+    def __init__(self, **kwargs) -> None:
+        super(Messages, self).__init__(**kwargs)
+    
+    def __repr__(self) -> str:
+        return f'<Messages {self.id}'
+
+
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    messages = db.relationship('Messages', backref='chat', lazy='dynamic')
+
+    def __init__(self, **kwargs) -> None:
+        super(Chat, self).__init__(**kwargs)
+    
+    def __repr__(self) -> str:
+        return f'<Chat {self.id}>'
 

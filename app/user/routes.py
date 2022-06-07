@@ -1,14 +1,16 @@
-from flask import current_app, request, redirect, session, render_template, abort, flash, url_for
+from flask import ( 
+    current_app, jsonify, request, redirect, session, g,
+    render_template, abort, flash, url_for, json)
 from flask.blueprints import Blueprint
 from flask_login import current_user, login_required
 from flask_babelplus import lazy_gettext as _l, get_locale
-from sqlalchemy.orm import aliased
+from sqlalchemy.exc import IntegrityError
 
-from app import db_session
+from app import db_session, socketio
+from app.errors.handlers import json_response
 from app.models import (
-    User, Message, Posts, PostRepost, 
-    PostLikes, PostBookmark, Follows, 
-    MessagesReplies, Notifications)
+    User, Posts, PostRepost, PostLikes, 
+    PostBookmark, Follows, Notifications, Messages, Chat)
 from app.user.forms import ChatForm, PostForm
 
 user = Blueprint('user', __name__)
@@ -24,7 +26,9 @@ def account(id):
     pagination = query.paginate(page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
     posts = pagination.items
     msg = _l('There\'s no activites yet')
-    return render_template('user/account.html', lang=lang, title=title, user=user, msg=msg, posts=posts)
+    to_follow = User.query.order_by(User.joined_date.desc()).limit(3)
+    return render_template('user/account.html', lang=lang, title=title, user=user,
+                            msg=msg, posts=posts, to_follow=to_follow)
 
 @user.route('/account/<int:id>/<string:action>', methods=['GET', 'POST'])
 @login_required
@@ -34,7 +38,7 @@ def action(id, action):
     if action == 'follow':
         current_user.follow(user)
         db_session.commit()
-        user.add_notifications(name='new_follower', user=current_user)
+        user.add_notifications(name='follower', user=current_user)
         db_session.commit()
         return redirect(request.referrer)
     if action == 'unfollow':
@@ -91,7 +95,9 @@ def activities(id, action):
             .order_by(PostRepost.timestamp.desc())
     pagination = query.paginate(page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
     posts = pagination.items
-    return render_template('user/account.html', lang=lang, title=title, user=user, msg=msg, posts=posts)
+    to_follow = User.query.filter(User.id != current_user.id).limit(3)
+    return render_template('user/account.html', lang=lang, title=title,
+                            user=user, msg=msg, posts=posts, to_follow=to_follow)
 
 @user.route('/<int:id>/about', methods=['GET'])
 @login_required
@@ -101,33 +107,40 @@ def about(id):
     user = User.query.get_or_404(id)
     return render_template('user/about.html', lang=lang, title=title, user=user)
 
-@user.route('/messages')
+@user.route('/messages', methods=['GET', 'POST'])
 @login_required
 def messages():
-    lang = session['lang']
-    title = _l('Messages')
-    page = request.args.get('page', 1, type=int)
-    query = current_user.messages_received.filter_by(recipient=current_user)
-    pagination = query.order_by(Message.timestamp.asc()).paginate(
-        page, per_page=current_app.config['MESSAGES_PER_PAGE'], error_out=False)
-    messages = pagination.items
-    return render_template('user/messages.html', lang=lang, title=title, messages=messages)
-
-@user.route('/contact/<string:username>', methods=['GET', 'POST'])
-@login_required
-def send_message(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    lang = session['lang']
-    title_str = f'Contact {user.username}'
-    title = _l(title_str)
-    form = ChatForm()
-    sent = current_user.messages_sent\
-        .order_by(Message.timestamp.asc())
-    if request.method == 'POST' and form.validate_on_submit():
-        m = Message(author=current_user, recipient=user, body=form.text.data)
-        db_session.add(m)
+    unread = Messages.query.filter_by(recipent=current_user, read=False).all()
+    for m in unread:
+        m.read = True
         db_session.commit()
-        flash(_l('Message sent'), 'success')
-        return redirect(request.referrer)
-    return render_template('user/chat.html', lang=lang, title=title, user=user, form=form, msgs=sent)
+    page = request.args.get('page', 1, type=int)
+    query = current_user.messages_received
+    pagination = query.paginate(page, per_page=current_app.config['MESSAGES_PER_PAGE'], error_out=False)
+    messages = pagination.items
+    return render_template('user/messages.html', messages=messages)
 
+@user.route('/chat/<id>/<username>', methods=['GET', 'POST'])
+@login_required
+def chat(id, username):
+    title = _l('Chat')
+    user = User.query.filter_by(username=username).first_or_404()
+    chat = Chat.query.get(id)
+    messages = Messages.query.filter_by(chat_id=chat.id).all()
+    return render_template(
+                            'user/chat.html', title=title, lang=session['lang'], 
+                            user=user, chat=chat, messages=messages)
+ 
+@socketio.on('send_message')
+def handle_send_message(data):
+    socketio.emit('received_message', data, chat=data['chat_id'])
+    message = Messages(
+                        text=data['message'],
+                        sender_id=data['sender_id'], 
+                        receiver_id=data['receiver_id'], 
+                        chat_id=data['chat_id'])
+    try:
+        db_session.add(message)
+        db_session.commit()
+    except IntegrityError:
+        db_session.rollback()

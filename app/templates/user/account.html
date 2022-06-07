@@ -59,16 +59,12 @@
             </div>
         {% endif %}
     </section>
-
     {% include 'main/_to_follow.html' %}
-
 {% endblock %}
 
 {% block scripts %}
-
     {{ super() }}
     {% if current_user.is_authenticated %}
         <script src="{{ url_for('static', filename='js/posts.js') }}"></script>
     {% endif %}
-
 {% endblock %}

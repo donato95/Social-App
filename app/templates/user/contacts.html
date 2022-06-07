@@ -2,65 +2,65 @@
 {% block title %} {{ title }} {% endblock%}
 
 {% block content %}
-<section class="contacts col">
-    <div class="row">
-        {% if Followers %}
-            {% if user.followers.count() != 1 %}
-                {% for contact in contacts %}
-                    {% if contact.follower != user %}
-                        <div class="connect col-md-3 mb-2">
-                            <div class="card">
-                                <div class="contact-img">
-                                    <a href="{{ url_for('user.account', id=contact.follower.id) }}">
-                                        <img 
-                                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                                            alt="" class="img-fluid">
-                                    </a>
-                                </div>
-                                <div class="links">
-                                    <a 
-                                        href="{{ url_for('user.account', id=contact.follower.id) }}" 
-                                        class="link-color text-muted d-block">
-                                        @{{ contact.follower.username }}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <div class="bg-white p-4">{{ _('User has no followers yet') }}</div>
-            {% endif %}
-        {% endif %}
-        
-        {% if Follows %}
-            {% if user.followed.count() != 1 %}
-                {% for contact in contacts %}
-                    {% if contact.followed != user %}
-                        <div class="connect col-md-3 mb-2">
-                            <div class="card">
-                                <div class="contact-img">
-                                    <a href="{{ url_for('user.account', id=contact.followed.id) }}">
-                                        <img 
-                                            src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
-                                            alt="" class="img-fluid">
-                                    </a>
-                                </div>
-                                <div class="links">
-                                    <a 
-                                        href="{{ url_for('user.account', id=contact.followed.id) }}" 
-                                        class="link-color text-muted d-block">
-                                        @{{ contact.followed.username }}
-                                    </a>
+    <section class="contacts col">
+        <div class="row">
+            {% if Followers %}
+                {% if user.followers.count() != 1 %}
+                    {% for contact in contacts %}
+                        {% if contact.follower != user %}
+                            <div class="connect col-md-3 mb-2">
+                                <div class="card">
+                                    <div class="contact-img">
+                                        <a href="{{ url_for('user.account', id=contact.follower.id) }}">
+                                            <img 
+                                                src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                                                alt="" class="img-fluid">
+                                        </a>
+                                    </div>
+                                    <div class="links">
+                                        <a 
+                                            href="{{ url_for('user.account', id=contact.follower.id) }}" 
+                                            class="link-color text-muted d-block">
+                                            @{{ contact.follower.username }}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <div class="bg-white p-4">{{ _('User has not followed anyone yet') }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="bg-white p-4">{{ _('User has no followers yet') }}</div>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    </div>
-</section>
+            
+            {% if Follows %}
+                {% if user.followed.count() != 1 %}
+                    {% for contact in contacts %}
+                        {% if contact.followed != user %}
+                            <div class="connect col-md-3 mb-2">
+                                <div class="card">
+                                    <div class="contact-img">
+                                        <a href="{{ url_for('user.account', id=contact.followed.id) }}">
+                                            <img 
+                                                src="{{ url_for('static', filename='avatar/avatar.jpg') }}" 
+                                                alt="" class="img-fluid">
+                                        </a>
+                                    </div>
+                                    <div class="links">
+                                        <a 
+                                            href="{{ url_for('user.account', id=contact.followed.id) }}" 
+                                            class="link-color text-muted d-block">
+                                            @{{ contact.followed.username }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="bg-white p-4">{{ _('User has not followed anyone yet') }}</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
 {% endblock %}

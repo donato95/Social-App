@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, redirect, flash, request, abort, session
+from flask import jsonify, render_template, redirect, flash, request, abort, session, g
 from flask.blueprints import Blueprint
 from flask_login import current_user, login_required
 from flask_babelplus import lazy_gettext as _l

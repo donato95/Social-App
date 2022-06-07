@@ -1,0 +1,106 @@
+{% extends 'admin/index.html' %}
+{% from 'macros.html' import input_widget %}
+{% block title%}{{ title }}{% endblock %}
+
+{% block content %}
+    {% if create %}
+        <h2 class="my-3">Create User Account</h2>
+        <hr>
+        <div class="mt-4">
+            <form class="register-form bg-white" method="post">
+                {{ form.hidden_tag() }}
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        {{ form.firstname.label(class='form-label', for='firstname')}}
+                        {{ input_widget(form.firstname, 'firstname', placeholder=_('Your first name')) }}
+                    </div>
+
+                    <div class="col-sm-6">
+                        {{ form.lastname.label(class='form-label', for='lastname')}}
+                        {{ input_widget(form.lastname, 'lastname', placeholder=_('Your last name')) }}
+                    </div>
+
+                    <div class="col-12">
+                        {{ form.username.label(class='form-label', for='username')}}
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            {{ input_widget(form.username, 'username', placeholder=_('Unique username')) }}
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.email.label(class='form-label', for='email')}}
+                        {{ input_widget(form.email, 'email', placeholder=_('Your email')) }}
+                    </div>
+
+                    <div class="col-sm-6">
+                        {{ form.password.label(class='form-label', for='password')}}
+                        {{ input_widget(form.password, 'password', placeholder=_('Strong password')) }}
+                    </div>
+
+                    <div class="col-sm-6">
+                        {{ form.confirm.label(class='form-label', for='confirm')}}
+                        {{ input_widget(form.confirm, 'confirm', placeholder=_('Confirm your password')) }}
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.activate(class='form-check-input', id='activate') }}
+                        {{ form.activate.label(class='form-label', for='activate') }}
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.role.label(for='role-p', class='form-label') }}
+                        {{ form.role(class='form-select form-select-sm') }}
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.submit(class='form-control btn-primary', id='register')}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    {% if edit %}
+        <h2 class="my-3">Edit User Account</h2>
+        <hr>
+        <div class="mt-4">
+            <form class="register-form bg-white" method="post">
+                {{ form.hidden_tag() }}
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        {{ form.firstname.label(class='form-label', for='firstname')}}
+                        {{ input_widget(form.firstname, 'firstname', placeholder=_('Your first name')) }}
+                    </div>
+
+                    <div class="col-sm-6">
+                        {{ form.lastname.label(class='form-label', for='lastname')}}
+                        {{ input_widget(form.lastname, 'lastname', placeholder=_('Your last name')) }}
+                    </div>
+
+                    <div class="col-12">
+                        {{ form.username.label(class='form-label', for='username')}}
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            {{ input_widget(form.username, 'username', placeholder=_('Unique username')) }}
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.activate(class='form-check-input checked', id='activate') }}
+                        {{ form.activate.label(class='form-label', for='activate') }}
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.role.label(for='role-p', class='form-label') }}
+                        {{ form.role(class='form-select form-select-sm', id='role-p') }}
+                    </div>
+
+                    <div class="col-sm-12">
+                        {{ form.submit(class='form-control btn-primary', value='Save', id='register')}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -17,7 +17,7 @@ def length(field, min=-1, max=-1, message=None):
     if l < min or max != -1 and l > max:
         raise ValidationError(message)
 
-def empty_check(field, message=None):
+def empty_check(field, message=None): 
     """ Custome required validator """
     if not message:
         message = _l('This field is required')

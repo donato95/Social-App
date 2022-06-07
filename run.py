@@ -1,6 +1,9 @@
 import os
+import unittest
 import click
+
 from app import create_app
+from app.models import Roles
 
 app = create_app('default')
 
@@ -33,3 +36,14 @@ def init(lang):
     if os.system('pybabel init -i messages.pot -d app/translations -l ' + lang):
         raise RuntimeError('init command failed')
     os.remove('messages.pot')
+
+@app.cli.command()
+def test():
+    """ Run the unit test code """
+    tests = unittest.TestLoader().discover('tests', top_level_dir=app.root_path)
+    unittest.TextTestRunner(verbosity=2).run(tests)
+
+@app.cli.command()
+def roles():
+    """ Insert user roles into database """
+    Roles.add_roles()

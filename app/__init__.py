@@ -1,14 +1,16 @@
 import os
-from flask import Flask, request, current_app, session
+from flask import Flask, request, current_app, session, g
+from flask_login import LoginManager, current_user
+from flask_babelplus import Babel, lazy_gettext as _l
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, current_user
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
-from flask_babelplus import Babel, lazy_gettext as _l
 from flask_cors import CORS
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_wtf.csrf import CSRFProtect
+from flask_socketio import SocketIO
 from config import config
 
 db = SQLAlchemy()
@@ -19,17 +21,19 @@ babel = Babel()
 cors = CORS()
 moment = Moment()
 mail = Mail()
+csrf = CSRFProtect()
+socketio = SocketIO()
 db_session = db.session
 
-# login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
-login_manager.login_message = _l('You have to login first')
-login_manager.login_message_category = 'warning'
+login_manager.login_message = None
+# login_manager.refresh_view = 'auth.refresh'
+# login_manager.needs_refresh_message = _l('You have to re enter yout credintials')
+# login_manager.needs_refresh_message_category = 'info'
 
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-
     app.config.update(dict(
         MAIL_SERVER = 'smtp.googlemail.com',
         MAIL_PORT = 587,
@@ -45,7 +49,9 @@ def create_app(config_name):
     babel.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
-    cors.init_app(app, resources={r"/*": {"origins": "*"}})
+    csrf.init_app(app)
+    cors.init_app(app, resources={r"/*": {"origins": "http://127.0.0.1:5000"}})
+    socketio.init_app(app)
 
     from app.main import main
     app.register_blueprint(main)
@@ -63,7 +69,10 @@ def create_app(config_name):
     app.register_blueprint(posts, url_prefix='/posts')
 
     from app.api import api
-    app.register_blueprint(api, url_prefix='/api/1')
+    app.register_blueprint(api, url_prefix='/api/v1')
+
+    from app.admin import admin
+    app.register_blueprint(admin, url_prefix='/admin')
 
     from app.errors.handlers import (
                                 forbidden_access, not_found_error,
@@ -78,7 +87,6 @@ def create_app(config_name):
     app.register_error_handler(500, internerl_error)
 
     return app
-
 
 @babel.localeselector
 def get_locale():

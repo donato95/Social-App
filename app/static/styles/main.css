@@ -9,6 +9,9 @@ div, article, nav, header, aside, footer, figcaption, figure, section {
 body {
     background-color: #f5f5f5;
 }
+body::after {
+    content: none;
+}
 a {
     cursor: pointer;
     text-decoration: none;
@@ -60,9 +63,27 @@ ul {
 .ltr {
     direction: ltr;
 }
+.float-right {
+    float: right !important;
+}
+.float-left {
+    float: left !important;
+}
+.float-left::after {
+    clear: both !important;
+}
+.float-right::after {
+    clear: both !important;
+}
+.clear {
+    clear: both;
+}
 .main-bg-color {
     background-color: #1289A7;
     color: #fff;
+}
+.gray {
+    background-color: #f5f5f5;
 }
 .pagination {
     padding: 0;
@@ -353,60 +374,30 @@ ul {
     font-size: 18px;
     padding: 10px 0;
 }
-.user-aside nav a i {
-    
-}
-.my-contacts {
-
-}
-.my-contacts header {
-
-}
-.my-contacts header h3 {
-
-}
-.my-contacts .order {
-
-}
 .my-contacts .order a {
     font-size: 17px;
 }
 .my-contacts .order i {
     font-size: 10px;
 }
-.my-contacts .order a:last-child {
-
-}
-.my-contacts .search-form {
-
-}
-.my-contacts .search-form input {
-
-}
-.my-contacts .search-form button {
-
-}
 .my-contacts .message div.d-flex {
     padding: 10px;
     align-items: center;
 }
-.my-contacts .message .header {
-
-}
-.my-contacts .message .header div,
 .my-contacts .message .timestamp {
     width: 50%;
 }
-.my-contacts .message .header div img {
-    width: 25%;
-    padding: 2px;
+.my-contacts .message .img-holder {
+    width: 8%;
+}
+.my-contacts .message .img-holder img {
     border-radius: 50%;
 }
-.my-contacts .message .header a {
-
+.my-contacts .message a.main-color {
+    margin: 8px;
 }
-.my-contacts .message .timestamp {
-
+.my-contacts .message .a.main-color:hover {
+    color: #1289A7;
 }
 .my-contacts .message .content {
     padding: 0 15px;
@@ -415,42 +406,21 @@ ul {
     padding: 10px;
     align-items: center;
 }
-.chat .header div {
-    width: 50%;
+.chat header {
+    padding: 10px 10px 0;
 }
-.chat .header div img {
-    width: 30%;
-    padding: 2px;
-    border-radius: 50%;
-}
-.chat .content {
+.chat .messages {
     padding: 10px;
 }
-.recipient {}
-.recipient div {
-    width: 100%;
-}
-.recipient div img {
-    width: 60%;
-    padding: 2px;
-    border-radius: 50%;
-}
-.recipient-msg,
-.sender-msg {
+
+.chat .messages p {
+    line-height: 1.5;
     padding: 10px;
-    border-radius: 5px;
+    margin: 10px 0;
 }
-.sender {}
-.chat .sender-msg {
-    background-color: #f5f5f5;
-}
-.chat-form form {
-    width: 100%;
-    padding: 10px;
-}
-.chat-form form textarea {
-    max-height: 100px;
-    height: 100px;
+.chat .messages p .timestamp {
+    font-size: 13px;
+    width: 18%;
 }
 .main-user {
     padding: 10px;
